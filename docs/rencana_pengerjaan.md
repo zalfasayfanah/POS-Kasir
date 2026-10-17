@@ -102,15 +102,15 @@ graph TD
 ---
 
 #### **Fase 2: Autentikasi, Route Guard (RBAC) & Layout Responsif**
-- [ ] Halaman Login (`/login`) dengan error handling informatif.
-- [ ] Middleware Next.js untuk Route Guard:
+- [x] Halaman Login (`/login`) dengan error handling informatif dan quick selector akun uji.
+- [x] Middleware Next.js untuk Route Guard:
   - Pengecekan status login & status aktif akun (`aktif = true`, BR-01).
   - Redirect otomatis berdasarkan peran:
     - `kasir` ➔ `/kasir`
     - `kepala_toko` ➔ `/transaksi`
     - `owner` ➔ `/laporan`
   - Blokir akses URL langsung ke halaman yang bukan wewenangnya (misal Kasir membuka `/laporan` atau `/pengaturan` ➔ redirect/403).
-- [ ] Layout Utama Aplikasi:
+- [x] Layout Utama Aplikasi:
   - Navigasi sidebar/navbar adaptif sesuai peran yang sedang login.
   - Informasi nama staf, peran, cabang tugas, dan status shift aktif.
   - Desain responsif nyaman di tablet 10 inci (≥ 1024px) dan desktop (BR non-fungsional).

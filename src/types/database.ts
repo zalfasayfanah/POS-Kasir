@@ -153,47 +153,59 @@ export type Database = {
         Row: Cabang;
         Insert: Omit<Cabang, 'id'> & { id?: string };
         Update: Partial<Cabang>;
+        Relationships: [];
       };
       profiles: {
         Row: Profile;
         Insert: Omit<Profile, 'dibuat_pada'> & { dibuat_pada?: string };
         Update: Partial<Profile>;
+        Relationships: [];
       };
       produk: {
         Row: Produk;
         Insert: Omit<Produk, 'id' | 'dibuat_pada' | 'diubah_pada'> & { id?: string; dibuat_pada?: string; diubah_pada?: string };
         Update: Partial<Produk>;
+        Relationships: [];
       };
       riwayat_harga_modal: {
         Row: RiwayatHargaModal;
         Insert: Omit<RiwayatHargaModal, 'id' | 'dibuat_pada'> & { id?: string; dibuat_pada?: string };
         Update: Partial<RiwayatHargaModal>;
+        Relationships: [];
       };
       stok_cabang: {
         Row: StokCabang;
         Insert: Omit<StokCabang, 'id' | 'diubah_pada'> & { id?: string; diubah_pada?: string };
         Update: Partial<StokCabang>;
+        Relationships: [];
       };
       shift_kasir: {
         Row: ShiftKasir;
         Insert: Omit<ShiftKasir, 'id' | 'dibuka_pada'> & { id?: string; dibuka_pada?: string };
         Update: Partial<ShiftKasir>;
+        Relationships: [];
       };
       transaksi: {
         Row: Transaksi;
         Insert: Omit<Transaksi, 'id' | 'dibuat_pada'> & { id?: string; dibuat_pada?: string };
         Update: Partial<Transaksi>;
+        Relationships: [];
       };
       transaksi_item: {
         Row: TransaksiItem;
         Insert: Omit<TransaksiItem, 'id'> & { id?: string };
         Update: Partial<TransaksiItem>;
+        Relationships: [];
       };
       audit_log: {
         Row: AuditLog;
         Insert: Omit<AuditLog, 'id' | 'dibuat_pada'> & { id?: never; dibuat_pada?: string };
         Update: Partial<AuditLog>;
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       create_transaksi_atomic: {
@@ -224,6 +236,12 @@ export type Database = {
         };
         Returns: Json;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 };
