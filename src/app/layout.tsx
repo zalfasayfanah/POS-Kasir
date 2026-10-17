@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-stone-50 text-stone-900 selection:bg-amber-100 selection:text-amber-900">
+    <html lang="id" className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
+      <body className="min-h-screen flex flex-col font-sans bg-stone-50 text-stone-900 selection:bg-amber-100 selection:text-amber-900">
         {children}
         <Toaster position="top-right" richColors closeButton />
       </body>

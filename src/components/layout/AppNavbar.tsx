@@ -65,7 +65,7 @@ export default function AppNavbar({ profile, activeShiftId }: AppNavbarProps) {
   }[profile.peran];
 
   return (
-    <header className="sticky top-0 z-40 bg-stone-900 text-white shadow-md border-b border-stone-800">
+    <header className="sticky top-0 z-50 w-full bg-stone-900/95 backdrop-blur-md text-white shadow-md border-b border-stone-800">
       {/* Top Bar: Brand, User Info, Shift Badge, Logout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
