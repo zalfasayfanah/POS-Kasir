@@ -135,7 +135,7 @@ graph TD
 ---
 
 #### **Fase 4: Antarmuka POS Kasir & Transaksi Aman Konkurensi (US-02, US-03)**
-- [ ] Halaman **Kasir POS** (`/kasir`):
+- [x] Halaman **Kasir POS** (`/kasir`):
   - Grid kartu produk dengan filter kategori & kotak pencarian instan.
   - Badge stok per cabang real-time (produk `lacak_stok = false` ditandai khusus).
   - Panel Keranjang Belanja: penyesuaian quantity (1-99), validasi stok di sisi client.
@@ -143,13 +143,13 @@ graph TD
   - Pilihan metode bayar:
     - **Tunai**: input uang diterima, validasi nominal $\ge$ total, hitung kembalian otomatis (BR-07).
     - **QRIS Manual**: nominal pas sama persis dengan total (BR-07).
-- [ ] Database Function / Stored Procedure `create_transaksi_atomic`:
+- [x] Database Function / Stored Procedure `create_transaksi_atomic`:
   - Validasi bahwa kasir memiliki shift berstatus `buka` (BR-02).
   - Kunci baris cabang dengan `FOR UPDATE` untuk mengenerate nomor struk harian unik `KODE-YYYYMMDD-NNNN` berurutan tanpa celah race condition (BR-04).
   - Kunci baris stok produk yang dilacak dengan `FOR UPDATE`, validasi stok mencukupi (BR-03: anti minus, all-or-nothing rollback bila satu item kurang).
   - Pengurangan stok dan insert `transaksi` + `transaksi_item` dalam 1 transaksi database atomic.
   - Update akumulasi `total_tunai` / `total_qris` pada record shift kasir.
-- [ ] Modal Struk & Fitur Cetak:
+- [x] Modal Struk & Fitur Cetak:
   - Tampilan struk siap cetak format printer thermal 58mm / simpan PDF.
 
 ---
