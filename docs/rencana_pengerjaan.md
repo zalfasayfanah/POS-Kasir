@@ -186,7 +186,7 @@ graph TD
 ---
 
 #### **Fase 7: Dashboard Analitik & Laporan Laba Rugi (US-09)**
-- [ ] Halaman **Laporan** (`/laporan`):
+- [x] Halaman **Laporan** (`/laporan`):
   - Filter rentang tanggal (WIB) dan filter cabang.
   - Kartu Metrik Ringkasan: Omzet total, Jumlah Transaksi, Nilai Rata-rata Transaksi, Total Void.
   - Grafik Batang Penjualan Harian per Cabang.

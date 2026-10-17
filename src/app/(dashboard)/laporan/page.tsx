@@ -1,156 +1,116 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUserProfile } from '@/app/auth/actions';
-import { formatRupiah } from '@/lib/utils';
-import { BarChart3, TrendingUp, DollarSign, Receipt, Ban, ShieldCheck } from 'lucide-react';
+import LaporanClient, {
+  BranchOption,
+  TransaksiData,
+  ShiftData,
+} from '@/components/laporan/LaporanClient';
+
+export const dynamic = 'force-dynamic';
 
 export default async function LaporanPage() {
   const profile = await getCurrentUserProfile();
+
+  // Role Protection: Kasir tidak boleh mengakses laporan penjualan
+  if (!profile || profile.peran === 'kasir') {
+    redirect('/kasir');
+  }
+
   const supabase = await createClient();
+  const isOwner = profile.peran === 'owner';
+  const userCabangId = profile.cabang_id;
 
-  const isOwner = profile?.peran === 'owner';
+  // 1. Fetch Cabang List
+  const { data: cabangRows } = await supabase
+    .from('cabang')
+    .select('id, nama, kode')
+    .order('nama', { ascending: true });
 
-  // Ambil transaksi lunas untuk omzet
-  const { data: transaksiLunas } = await supabase
+  const cabangList: BranchOption[] = (cabangRows as BranchOption[]) || [];
+
+  // 2. Fetch Transactions with relation to cabang & items
+  // If Kepala Toko, Supabase RLS will naturally restrict, but we can also filter explicitly
+  let trxQuery = supabase
     .from('transaksi')
-    .select('*, items:transaksi_item(*)')
-    .eq('status', 'lunas');
+    .select(
+      'id, nomor_struk, total, status, metode_bayar, dibuat_pada, cabang_id, cabang(id, nama), items:transaksi_item(id, produk_id, nama_produk, harga_satuan, jumlah, subtotal)'
+    )
+    .order('dibuat_pada', { ascending: false });
 
-  const { data: transaksiVoid } = await supabase
-    .from('transaksi')
-    .select('id')
-    .eq('status', 'void');
+  if (!isOwner && userCabangId) {
+    trxQuery = trxQuery.eq('cabang_id', userCabangId);
+  }
 
-  const totalOmzet = (transaksiLunas as any[])?.reduce((acc: number, t: any) => acc + (t.total || 0), 0) || 0;
-  const countLunas = transaksiLunas?.length || 0;
-  const countVoid = transaksiVoid?.length || 0;
-  const avgOrderValue = countLunas > 0 ? Math.round(totalOmzet / countLunas) : 0;
+  const { data: trxRows } = await trxQuery;
+  const transaksiList = (trxRows as any[] as TransaksiData[]) || [];
 
-  // Khusus Owner: kalkulasi laba kotor dari riwayat harga modal
-  let totalHPP = 0;
-  let totalLabaKotor = 0;
-  let marginLaba = 0;
+  // 3. Fetch Shifts
+  let shiftQuery = supabase
+    .from('shift_kasir')
+    .select(
+      'id, cabang_id, cabang(nama), kasir_id, kasir:profiles!shift_kasir_kasir_id_fkey(nama_lengkap), status, dibuka_pada, ditutup_pada, kas_awal, total_tunai, total_qris, kas_seharusnya, uang_fisik, selisih, catatan_tutup, catatan_verifikasi'
+    )
+    .order('dibuka_pada', { ascending: false });
 
-  if (isOwner && transaksiLunas) {
-    const { data: modalRows } = await supabase.from('riwayat_harga_modal').select('*');
-    const modalMap: Record<string, number> = {};
-    if (modalRows) {
-      for (const m of modalRows as any[]) {
-        modalMap[m.produk_id] = m.harga_modal;
+  if (!isOwner && userCabangId) {
+    shiftQuery = shiftQuery.eq('cabang_id', userCabangId);
+  }
+
+  const { data: shiftRows } = await shiftQuery;
+  const shiftList = (shiftRows as any[] as ShiftData[]) || [];
+
+  // 4. Khusus Owner: Hitung Historical HPP & Gross Profit per transaksi (BR-11)
+  // Penting: Objek ini HANYA dibuat dan dikirim jika isOwner === true.
+  // Jika Kepala Toko, ownerProfitMap undefined / tidak pernah dikirim ke browser!
+  let ownerProfitMap: Record<string, { hpp: number; grossProfit: number }> | undefined = undefined;
+
+  if (isOwner) {
+    // Ambil seluruh riwayat modal diurutkan berdasarkan berlaku_mulai desc
+    const { data: modalRows } = await supabase
+      .from('riwayat_harga_modal')
+      .select('produk_id, harga_modal, berlaku_mulai')
+      .order('berlaku_mulai', { ascending: false });
+
+    const safeModalRows = (modalRows as any[]) || [];
+
+    // Helper untuk mencari harga modal yang berlaku pada tanggal transaksi
+    const getHistoricalUnitCost = (produkId: string, trxIsoString: string): number => {
+      const trxTime = new Date(trxIsoString).getTime();
+      const applicable = safeModalRows.filter(
+        (m) => m.produk_id === produkId && new Date(m.berlaku_mulai).getTime() <= trxTime
+      );
+      if (applicable.length > 0) {
+        return applicable[0].harga_modal;
       }
-    }
+      return 0;
+    };
 
-    for (const trx of transaksiLunas as any[]) {
-      if (trx.items) {
-        for (const it of trx.items) {
-          const cost = modalMap[it.produk_id] || 0;
-          totalHPP += cost * it.jumlah;
+    ownerProfitMap = {};
+    for (const trx of transaksiList) {
+      if (trx.status === 'lunas' && trx.items) {
+        let trxHpp = 0;
+        for (const item of trx.items) {
+          const unitCost = getHistoricalUnitCost(item.produk_id, trx.dibuat_pada);
+          trxHpp += unitCost * (item.jumlah || 0);
         }
+        ownerProfitMap[trx.id] = {
+          hpp: trxHpp,
+          grossProfit: (trx.total || 0) - trxHpp,
+        };
       }
     }
-    totalLabaKotor = totalOmzet - totalHPP;
-    marginLaba = totalOmzet > 0 ? Math.round((totalLabaKotor / totalOmzet) * 100) : 0;
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
-            <BarChart3 className="w-4 h-4" />
-            Analitik & Laporan Penjualan (US-09)
-          </div>
-          <h1 className="text-2xl font-bold text-stone-900">
-            Laporan Kinerja Penjualan
-          </h1>
-          <p className="text-sm text-stone-500 mt-1">
-            Pengguna: <span className="font-semibold text-stone-800">{profile?.nama_lengkap}</span> ({profile?.peran}) · {profile?.cabang ? profile.cabang.nama : 'Konsolidasi 3 Cabang'}
-          </p>
-        </div>
-      </div>
-
-      {/* Grid Metrik Ringkasan (Real Database Data) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <div className="flex items-center justify-between text-stone-500 text-xs font-semibold uppercase tracking-wider mb-2">
-            <span>Total Omzet Lunas</span>
-            <DollarSign className="w-4 h-4 text-emerald-600" />
-          </div>
-          <p className="text-2xl font-bold font-mono text-stone-900">
-            {formatRupiah(totalOmzet)}
-          </p>
-          <span className="text-xs text-stone-500 mt-1 block">Dari {countLunas} transaksi lunas</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <div className="flex items-center justify-between text-stone-500 text-xs font-semibold uppercase tracking-wider mb-2">
-            <span>Rata-Rata Transaksi</span>
-            <TrendingUp className="w-4 h-4 text-amber-600" />
-          </div>
-          <p className="text-2xl font-bold font-mono text-stone-900">
-            {formatRupiah(avgOrderValue)}
-          </p>
-          <span className="text-xs text-stone-500 mt-1 block">Average Order Value (AOV)</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <div className="flex items-center justify-between text-stone-500 text-xs font-semibold uppercase tracking-wider mb-2">
-            <span>Jumlah Transaksi</span>
-            <Receipt className="w-4 h-4 text-blue-600" />
-          </div>
-          <p className="text-2xl font-bold font-mono text-stone-900">
-            {countLunas}
-          </p>
-          <span className="text-xs text-stone-500 mt-1 block">Total struk terbit</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <div className="flex items-center justify-between text-stone-500 text-xs font-semibold uppercase tracking-wider mb-2">
-            <span>Transaksi Void</span>
-            <Ban className="w-4 h-4 text-red-600" />
-          </div>
-          <p className="text-2xl font-bold font-mono text-stone-900">
-            {countVoid}
-          </p>
-          <span className="text-xs text-stone-500 mt-1 block">Dibatalkan resmi</span>
-        </div>
-      </div>
-
-      {/* Panel Khusus Owner: Laba Kotor & Margin (BR-11 Confidential) */}
-      {isOwner && (
-        <div className="bg-gradient-to-br from-amber-900 to-stone-900 text-white p-6 rounded-2xl shadow-lg border border-amber-800/40">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              Informasi Rahasia Owner (BR-11)
-            </span>
-            <span className="text-[11px] text-amber-200/80 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800">
-              Tidak dapat diakses Kepala Toko / Kasir
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div>
-              <span className="text-xs text-amber-200/80 block mb-1">Total HPP (Modal)</span>
-              <p className="text-xl font-bold font-mono text-white">
-                {formatRupiah(totalHPP)}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-amber-200/80 block mb-1">Total Laba Kotor</span>
-              <p className="text-2xl font-bold font-mono text-amber-400">
-                {formatRupiah(totalLabaKotor)}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-amber-200/80 block mb-1">Margin Keuntungan</span>
-              <p className="text-2xl font-bold font-mono text-emerald-400">
-                {marginLaba}%
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <LaporanClient
+      isOwner={isOwner}
+      userCabangId={userCabangId}
+      cabangList={cabangList}
+      transaksiList={transaksiList}
+      shiftList={shiftList}
+      ownerProfitMap={ownerProfitMap}
+    />
   );
 }
