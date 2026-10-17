@@ -76,15 +76,15 @@ graph TD
   - `PRD_POS.md`
   - `ERD_POS.md` & `ERD_POS.png`
   - `Data_Contoh_POS.xlsx`
-- [ ] Menyusun dokumen [`docs/test-plan.md`](file:///d:/MaSelf/Bootcamp%20Plan%20Indo/POS-Kasir/docs/test-plan.md) berisi minimal 15 test case (positif, negatif, uji batas, uji hak akses) yang merujuk kode `BR-01` sampai `BR-12`.
-- [ ] Menyusun matriks hak akses 3 peran (`Kasir`, `Kepala Toko`, `Owner`) untuk setiap halaman dan tabel data.
+- [x] Menyusun dokumen [`docs/test-plan.md`](file:///d:/MaSelf/Bootcamp%20Plan%20Indo/POS-Kasir/docs/test-plan.md) berisi minimal 15 test case (positif, negatif, uji batas, uji hak akses) yang merujuk kode `BR-01` sampai `BR-12`.
+- [x] Menyusun matriks hak akses 3 peran (`Kasir`, `Kepala Toko`, `Owner`) untuk setiap halaman dan tabel data.
 
 ---
 
 #### **Fase 1: Setup Proyek Next.js & Skema Database Supabase**
-- [ ] Inisialisasi proyek Next.js (App Router, TypeScript, Tailwind CSS, Lucide React, Sonner / Toaster).
-- [ ] Setup Supabase Client & SSR helper (`@supabase/ssr`).
-- [ ] Pembuatan skrip SQL migrasi untuk 9 tabel inti di Supabase:
+- [x] Inisialisasi proyek Next.js (App Router, TypeScript, Tailwind CSS, Lucide React, Sonner / Toaster).
+- [x] Setup Supabase Client & SSR helper (`@supabase/ssr`).
+- [x] Pembuatan skrip SQL migrasi untuk 9 tabel inti di Supabase:
   1. `cabang`
   2. `profiles` (terikat ke `auth.users`)
   3. `produk`
@@ -94,10 +94,10 @@ graph TD
   7. `transaksi`
   8. `transaksi_item`
   9. `audit_log`
-- [ ] Setup Database Triggers:
+- [x] Setup Database Triggers:
   - Otomatis membuat baris di `profiles` saat user baru terdaftar di Supabase Auth.
-- [ ] Konfigurasi Row Level Security (RLS) di seluruh 9 tabel.
-- [ ] Seeding data contoh dari `Data_Contoh_POS.xlsx` (cabang, akun staf awal, produk katalog, modal, dan stok awal).
+- [x] Konfigurasi Row Level Security (RLS) di seluruh 9 tabel.
+- [x] Seeding data contoh dari `Data_Contoh_POS.xlsx` (cabang, akun staf awal, produk katalog, modal, dan stok awal).
 
 ---
 
