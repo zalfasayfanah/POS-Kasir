@@ -23,16 +23,20 @@ export default async function TransaksiPage() {
   // - Kasir hanya melihat transaksi miliknya (BR-01)
   // - Kepala Toko hanya melihat transaksi cabangnya (BR-01)
   // - Owner dapat melihat transaksi semua cabang (BR-01)
-  const { data: rawTransaksi } = await (supabase
+  const { data: rawTransaksi, error } = await (supabase
     .from('transaksi') as any)
     .select(`
       *,
       cabang:cabang(*),
-      kasir:profiles(*),
+      kasir:profiles!transaksi_kasir_id_fkey(*),
       items:transaksi_item(*)
     `)
     .order('dibuat_pada', { ascending: false })
     .limit(100);
+
+  if (error) {
+    console.error('Error fetching transaksi:', error);
+  }
 
   const initialTransactions: Transaksi[] = rawTransaksi || [];
 

@@ -252,7 +252,7 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
     .select(`
       *,
       cabang:cabang(*),
-      kasir:profiles(*),
+      kasir:profiles!transaksi_kasir_id_fkey(*),
       items:transaksi_item(*)
     `)
     .eq('id', transaksiId)
