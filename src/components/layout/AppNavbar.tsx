@@ -97,10 +97,25 @@ export default function AppNavbar({ profile, activeShiftId }: AppNavbarProps) {
 
             {/* Shift Status for Cashier */}
             {profile.peran === 'kasir' && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border bg-emerald-950/60 border-emerald-700 text-emerald-300">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Shift Aktif</span>
-              </div>
+              activeShiftId ? (
+                <Link
+                  href="/shift"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border bg-emerald-950/60 border-emerald-700 text-emerald-300 hover:bg-emerald-900/60 transition"
+                  title="Lihat status shift aktif"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Shift Aktif</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/shift"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border bg-amber-950/60 border-amber-600 text-amber-300 hover:bg-amber-900/60 transition"
+                  title="Klik untuk membuka shift kasir baru"
+                >
+                  <Clock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Buka Shift</span>
+                </Link>
+              )
             )}
 
             {/* Profile Chip */}

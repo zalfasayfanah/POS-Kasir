@@ -12,6 +12,8 @@ export type StatusShift = 'buka' | 'ditutup' | 'diverifikasi';
 export type StatusTransaksi = 'lunas' | 'void' | 'menunggu_bayar' | 'batal';
 export type MetodeBayar = 'tunai' | 'qris';
 export type AksiAuditLog = 
+  | 'buka_shift'
+  | 'tutup_shift'
   | 'void_transaksi'
   | 'verifikasi_shift'
   | 'penyesuaian_stok'
@@ -151,55 +153,80 @@ export type Database = {
     Tables: {
       cabang: {
         Row: Cabang;
-        Insert: Omit<Cabang, 'id'> & { id?: string };
+        Insert: Partial<Cabang> & { kode: string; nama: string };
         Update: Partial<Cabang>;
         Relationships: [];
       };
       profiles: {
         Row: Profile;
-        Insert: Omit<Profile, 'dibuat_pada'> & { dibuat_pada?: string };
+        Insert: Partial<Profile> & { id: string; nama_lengkap: string; email: string; peran: PeranUser };
         Update: Partial<Profile>;
         Relationships: [];
       };
       produk: {
         Row: Produk;
-        Insert: Omit<Produk, 'id' | 'dibuat_pada' | 'diubah_pada'> & { id?: string; dibuat_pada?: string; diubah_pada?: string };
+        Insert: Partial<Produk> & { sku: string; nama: string; kategori: KategoriProduk; harga_jual: number };
         Update: Partial<Produk>;
         Relationships: [];
       };
       riwayat_harga_modal: {
         Row: RiwayatHargaModal;
-        Insert: Omit<RiwayatHargaModal, 'id' | 'dibuat_pada'> & { id?: string; dibuat_pada?: string };
+        Insert: Partial<RiwayatHargaModal> & { produk_id: string; harga_modal: number; berlaku_mulai: string };
         Update: Partial<RiwayatHargaModal>;
         Relationships: [];
       };
       stok_cabang: {
         Row: StokCabang;
-        Insert: Omit<StokCabang, 'id' | 'diubah_pada'> & { id?: string; diubah_pada?: string };
+        Insert: Partial<StokCabang> & { cabang_id: string; produk_id: string; jumlah: number };
         Update: Partial<StokCabang>;
         Relationships: [];
       };
       shift_kasir: {
         Row: ShiftKasir;
-        Insert: Omit<ShiftKasir, 'id' | 'dibuka_pada'> & { id?: string; dibuka_pada?: string };
+        Insert: Partial<ShiftKasir> & { cabang_id: string; kasir_id: string; kas_awal: number };
         Update: Partial<ShiftKasir>;
         Relationships: [];
       };
       transaksi: {
         Row: Transaksi;
-        Insert: Omit<Transaksi, 'id' | 'dibuat_pada'> & { id?: string; dibuat_pada?: string };
+        Insert: Partial<Transaksi> & {
+          nomor_struk: string;
+          cabang_id: string;
+          shift_id: string;
+          kasir_id: string;
+          subtotal: number;
+          total: number;
+          metode_bayar: MetodeBayar;
+          uang_diterima: number;
+        };
         Update: Partial<Transaksi>;
         Relationships: [];
       };
       transaksi_item: {
         Row: TransaksiItem;
-        Insert: Omit<TransaksiItem, 'id'> & { id?: string };
+        Insert: Partial<TransaksiItem> & {
+          transaksi_id: string;
+          produk_id: string;
+          nama_produk: string;
+          harga_satuan: number;
+          jumlah: number;
+          subtotal: number;
+        };
         Update: Partial<TransaksiItem>;
         Relationships: [];
       };
       audit_log: {
         Row: AuditLog;
-        Insert: Omit<AuditLog, 'id' | 'dibuat_pada'> & { id?: never; dibuat_pada?: string };
+        Insert: {
+          id?: number;
+          pelaku_id?: string | null;
+          aksi: AksiAuditLog;
+          tabel: string;
+          data_id?: string | null;
+          nilai_sebelum?: Json | null;
+          nilai_sesudah?: Json | null;
+          dibuat_pada?: string;
+        };
         Update: Partial<AuditLog>;
         Relationships: [];
       };
@@ -213,7 +240,7 @@ export type Database = {
           p_shift_id: string;
           p_subtotal: number;
           p_diskon: number;
-          p_alasan_diskon: string | null;
+          p_alasan_diskon?: string | null;
           p_total: number;
           p_metode_bayar: MetodeBayar;
           p_uang_diterima: number;

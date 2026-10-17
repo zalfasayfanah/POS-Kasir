@@ -118,16 +118,16 @@ graph TD
 ---
 
 #### **Fase 3: Manajemen Shift Kasir (US-01, US-04, US-05)**
-- [ ] Halaman **Shift Saya** (`/shift`):
+- [x] Halaman **Shift Saya** (`/shift`):
   - Validasi pembukaan shift baru: Kas awal Rp0 s/d Rp2.000.000 (BR-02).
   - Pencegahan multi-shift: 1 kasir maksimal memiliki 1 shift aktif berstatus `buka` (BR-02).
   - Ringkasan shift berjalan: akumulasi total pembayaran tunai & total QRIS secara real-time.
-- [ ] Formulir **Tutup Shift**:
+- [x] Formulir **Tutup Shift**:
   - Input hitungan fisik uang laci (`uang_fisik`).
   - Kalkulasi otomatis `kas_seharusnya = kas_awal + total_tunai_lunas`.
   - Validasi catatan: Jika `|selisih| > Rp20.000`, kolom `catatan_tutup` wajib diisi (BR-09).
   - Freeze shift: status berubah menjadi `ditutup`, kasir tidak dapat menambah transaksi baru.
-- [ ] Halaman **Shift Cabang** (`/shift-cabang` untuk Kepala Toko & Owner):
+- [x] Halaman **Shift Cabang** (`/shift-cabang` untuk Kepala Toko & Owner):
   - Daftar shift kasir per cabang beserta badge status dan selisih kas.
   - Tombol aksi **Verifikasi Shift**: mengubah status `ditutup` ➔ `diverifikasi` (BR-10).
   - Pencatatan verifikasi ke `audit_log` (BR-12).

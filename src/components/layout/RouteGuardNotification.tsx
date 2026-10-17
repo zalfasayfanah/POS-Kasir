@@ -38,7 +38,7 @@ export default function RouteGuardNotification() {
           </div>
           <div>
             <h4 className="text-sm font-bold text-red-900 leading-tight">
-              Akses Ditolak (Route Guard RBAC)
+              Akses Ditolak
             </h4>
             <p className="text-xs text-red-700 mt-0.5 leading-relaxed">
               {deniedMessage}

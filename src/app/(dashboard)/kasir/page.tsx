@@ -1,24 +1,35 @@
 import React from 'react';
 import { getCurrentUserProfile } from '@/app/auth/actions';
-import { ShoppingCart, Clock, AlertCircle } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { ShoppingCart, Clock, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { formatRupiah } from '@/lib/utils';
 
 export default async function KasirPage() {
   const profile = await getCurrentUserProfile();
+  const supabase = await createClient();
+
+  // Cek apakah ada shift aktif untuk kasir ini (BR-02)
+  const { data: activeShift } = await (supabase
+    .from('shift_kasir') as any)
+    .select('*')
+    .eq('kasir_id', profile?.id || '')
+    .eq('status', 'buka')
+    .maybeSingle();
 
   return (
     <div className="space-y-6">
       {/* Header Halaman */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-3xl border border-stone-200/80 shadow-md">
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <ShoppingCart className="w-4 h-4" />
             Halaman Kasir POS (US-02, US-03)
           </div>
-          <h1 className="text-2xl font-bold text-stone-900">
-            Penjualan Kasir · Cabang {profile?.cabang?.nama || 'Tebet'}
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
+            Penjualan Kasir · {profile?.cabang?.nama || 'Pusat'}
           </h1>
-          <p className="text-sm text-stone-500 mt-1">
+          <p className="text-xs sm:text-sm text-stone-500 mt-1">
             Petugas bertugas: <span className="font-semibold text-stone-800">{profile?.nama_lengkap}</span> ({profile?.email})
           </p>
         </div>
@@ -26,33 +37,69 @@ export default async function KasirPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/shift"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-sm font-semibold transition"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs sm:text-sm font-bold transition shadow-sm"
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4 text-amber-700" />
             Kelola Shift Kasir
           </Link>
         </div>
       </div>
 
-      {/* Info Card: Fase 2 Siap */}
-      <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-6 text-amber-900">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-2">
-            <h2 className="text-base font-bold">Fase 2: Autentikasi & Route Guard Berhasil Aktif!</h2>
-            <p className="text-sm text-amber-800 leading-relaxed">
-              Anda berhasil login sebagai <strong>{profile?.nama_lengkap}</strong> dengan peran{' '}
-              <span className="font-semibold uppercase tracking-wider bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">
-                {profile?.peran}
-              </span>
-              . Sistem secara otomatis mengarahkan Anda ke rute kasir ini.
-            </p>
-            <p className="text-xs text-amber-700">
-              📌 <strong>Langkah Berikutnya (Fase 3 & 4):</strong> Membuka shift kasir dengan kas awal (BR-02), menampilkan kartu produk kopi & roti, keranjang belanja tablet-ready, diskon (BR-06), dan cetak struk berurutan (BR-04).
-            </p>
+      {/* Status Shift Kasir Banner (BR-02) */}
+      {!activeShift ? (
+        <div className="bg-amber-500/10 border border-amber-400/50 rounded-3xl p-6 sm:p-8 text-amber-950 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-800 shrink-0 mt-0.5">
+              <Clock className="w-7 h-7" />
+            </div>
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[11px] font-bold uppercase tracking-wider">
+                Shift Belum Dibuka (BR-02)
+              </div>
+              <h2 className="text-xl font-bold text-stone-900">
+                Buka Shift Terlebih Dahulu Sebelum Melayani Transaksi
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
+                Berdasarkan aturan operasional (BR-02), setiap petugas kasir wajib membuka shift dengan mencatat uang modal awal di laci kasir (Rp 0 s/d Rp 2.000.000) sebelum memproses transaksi penjualan POS.
+              </p>
+            </div>
           </div>
+
+          <Link
+            href="/shift"
+            className="px-6 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-bold text-sm shadow-md shadow-amber-950/20 flex items-center justify-center gap-2 transition shrink-0"
+          >
+            <span>Buka Shift Sekarang</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
-      </div>
+      ) : (
+        <div className="bg-emerald-500/10 border border-emerald-400/50 rounded-3xl p-6 text-emerald-950 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-800 shrink-0">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                  Shift Aktif Berjalan
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-stone-900 mt-0.5">
+                Modal Awal: <strong className="font-mono text-emerald-900">{formatRupiah(activeShift.kas_awal)}</strong> · Siap untuk transaksi penjualan.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/shift"
+            className="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition shrink-0"
+          >
+            <span>Detail Shift & Tutup Kas</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
