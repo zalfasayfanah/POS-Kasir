@@ -155,17 +155,17 @@ graph TD
 ---
 
 #### **Fase 5: Pembatalan Transaksi (Void) & Penyesuaian Stok (US-06, US-07)**
-- [ ] Halaman **Transaksi** (`/transaksi`):
+- [x] Halaman **Transaksi** (`/transaksi`):
   - Filter rentang tanggal, status (`lunas`, `void`), metode bayar, dan cabang.
   - Hak akses data: Kasir hanya melihat transaksi miliknya, Kepala Toko melihat cabangnya, Owner melihat semua cabang (BR-01).
-- [ ] Fitur **Void Transaksi**:
+- [x] Fitur **Void Transaksi**:
   - Modal Void dengan syarat ketat: hanya Kepala Toko cabang terkait atau Owner, hanya transaksi `lunas` di hari yang sama, dan shift kasir masih `buka` (BR-08).
   - Validasi alasan void minimal 10 karakter (BR-08).
   - Database Function `void_transaksi_atomic`:
     - Mengembalikan jumlah stok produk yang dilacak ke `stok_cabang`.
     - Mengubah status transaksi menjadi `void`.
     - Mencatat aksi ke `audit_log` dengan nilai sebelum dan sesudah (BR-12).
-- [ ] Halaman **Stok Cabang** (`/stok`):
+- [x] Halaman **Stok Cabang** (`/stok`):
   - Tabel stok produk per cabang dengan penanda visual stok di bawah minimum (`jumlah <= stok_minimum`).
   - Formulir Penyesuaian Stok (Barang Masuk, Barang Rusak, Stock Opname) disertai alasan wajib.
   - Pencatatan penyesuaian stok ke `audit_log`.
