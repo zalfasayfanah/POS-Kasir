@@ -173,13 +173,13 @@ graph TD
 ---
 
 #### **Fase 6: Manajemen Produk, Riwayat Modal & Pengaturan Akun (US-08, US-10)**
-- [ ] Halaman **Produk** (`/produk`):
+- [x] Halaman **Produk** (`/produk`):
   - Owner: Akses penuh (Tambah, Ubah detail, Atur harga jual, Nonaktifkan produk).
   - Kepala Toko: Read-only katalog produk tanpa harga modal.
-- [ ] Manajemen **Riwayat Harga Modal** (`riwayat_harga_modal`):
+- [x] Manajemen **Riwayat Harga Modal** (`riwayat_harga_modal`):
   - Khusus Owner: Tambah harga modal baru dengan tanggal berlaku (`berlaku_mulai` tidak boleh di masa lalu - BR-11).
   - Isolasi RLS: Kolom & tabel harga modal tidak pernah terekspos ke role Kasir/Kepala Toko.
-- [ ] Halaman **Pengaturan & Akun** (`/pengaturan`):
+- [x] Halaman **Pengaturan & Akun** (`/pengaturan`):
   - Kelola staf cabang (buat akun, atur cabang, aktifkan/nonaktifkan staf).
   - Tampilan viewer **Audit Log**: riwayat seluruh aksi sensitif yang tercatat permanen (*immutable*).
 
