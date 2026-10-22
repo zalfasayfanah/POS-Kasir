@@ -1,6 +1,6 @@
 const https = require('https');
 
-const token = '';
+const token = process.env.SUPABASE_ACCESS_TOKEN || '';
 const projectRef = 'rwsynpppttvwmneysezt';
 
 const req = https.request({

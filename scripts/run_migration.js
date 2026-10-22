@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
-const token = '';
+const token = process.env.SUPABASE_ACCESS_TOKEN || '';
 const projectRef = 'rwsynpppttvwmneysezt';
 const sqlFile = path.join(__dirname, '..', 'supabase', 'migrations', '20261017000000_initial_schema.sql');
 
