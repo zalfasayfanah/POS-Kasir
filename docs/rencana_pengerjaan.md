@@ -201,12 +201,13 @@ graph TD
 ---
 
 #### **Fase 8: Fitur Nilai Tambah (Nilai Plus Bobot 25%)**
-- [ ] Integrasi Pembayaran **QRIS Dinamis Mayar Sandbox** (PRD Bagian 11):
+- [x] Integrasi Pembayaran **QRIS Dinamis Mayar Sandbox** (PRD Bagian 11):
   - Request pembuatan invoice via Mayar API V2 (`POST /invoices/create`).
   - Status transaksi `menunggu_bayar`, stok diamankan sementara.
-  - Endpoint Webhook Netlify (`/api/webhooks/mayar`): verifikasi signature, ubah transaksi ke `lunas`.
-  - Mekanisme pembatalan otomatis jika tidak dibayar dalam 10 menit (kembalikan stok).
-- [ ] Fitur Ekspor Laporan:
+  - Endpoint Webhook Netlify (`/api/webhooks/mayar`): verifikasi signature/status resmi, ubah transaksi ke `lunas`.
+  - Mekanisme pembatalan otomatis jika tidak dibayar dalam 10 menit (kembalikan stok) & pembatalan manual oleh kasir.
+  - Proteksi penutupan shift: shift tidak dapat ditutup selama masih ada transaksi `menunggu_bayar`.
+- [x] Fitur Ekspor Laporan:
   - Unduh rekap penjualan & shift ke format CSV / PDF.
 
 ---

@@ -10,20 +10,27 @@ body {
   color: var(--foreground);
 }
 
-/* Struk Thermal Print Styling */
+/* Struk Thermal & Report Print Styling */
 @media print {
-  body * {
+  /* Khusus jika modal thermal receipt sedang terbuka */
+  body:has(#thermal-receipt) * {
     visibility: hidden;
   }
-  #thermal-receipt, #thermal-receipt * {
+  body:has(#thermal-receipt) #thermal-receipt,
+  body:has(#thermal-receipt) #thermal-receipt * {
     visibility: visible;
   }
-  #thermal-receipt {
+  body:has(#thermal-receipt) #thermal-receipt {
     position: absolute;
     left: 0;
     top: 0;
     width: 58mm !important;
     margin: 0;
     padding: 0;
+  }
+
+  /* Sembunyikan navbar & kontrol saat mencetak laporan */
+  header, nav, aside, button {
+    display: none !important;
   }
 }

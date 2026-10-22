@@ -20,7 +20,11 @@ import {
   Clock,
   Layers,
   Percent,
+  Download,
+  FileSpreadsheet,
+  Printer,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export interface BranchOption {
   id: string;
@@ -346,6 +350,111 @@ export default function LaporanClient({
     };
   }, [isOwner, lunasTrx, ownerProfitMap, totalOmzet]);
 
+  // Ekspor CSV Rekap Penjualan (Fase 8)
+  const exportTransaksiCsv = () => {
+    if (filteredTransaksi.length === 0) {
+      toast.error('Tidak ada data transaksi yang sesuai filter untuk diekspor.');
+      return;
+    }
+
+    const headers = [
+      'Nomor Struk',
+      'Waktu Transaksi (WIB)',
+      'Cabang',
+      'Status',
+      'Metode Bayar',
+      'Total (Rp)',
+      'Jumlah Item',
+      'Rincian Produk',
+    ];
+
+    const rows = filteredTransaksi.map((t) => {
+      const itemsStr = (t.items || [])
+        .map((it) => `${it.nama_produk} (x${it.jumlah})`)
+        .join('; ');
+
+      return [
+        `"${t.nomor_struk}"`,
+        `"${new Date(t.dibuat_pada).toLocaleString('id-ID')}"`,
+        `"${t.cabang?.nama || '-'}"`,
+        `"${t.status.toUpperCase()}"`,
+        `"${t.metode_bayar.toUpperCase()}"`,
+        t.total,
+        t.items?.reduce((s, it) => s + it.jumlah, 0) || 0,
+        `"${itemsStr.replace(/"/g, '""')}"`,
+      ].join(',');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `rekap-penjualan-pos-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Berhasil mengunduh ${filteredTransaksi.length} data transaksi ke CSV!`);
+  };
+
+  // Ekspor CSV Rekap Shift Kasir (Fase 8)
+  const exportShiftCsv = () => {
+    if (filteredShifts.length === 0) {
+      toast.error('Tidak ada data shift yang sesuai filter untuk diekspor.');
+      return;
+    }
+
+    const headers = [
+      'ID Shift',
+      'Cabang',
+      'Petugas Kasir',
+      'Waktu Buka (WIB)',
+      'Waktu Tutup (WIB)',
+      'Status',
+      'Kas Awal (Rp)',
+      'Total Tunai (Rp)',
+      'Total QRIS (Rp)',
+      'Kas Seharusnya (Rp)',
+      'Uang Fisik Laci (Rp)',
+      'Selisih (Rp)',
+      'Catatan Kasir',
+      'Catatan Verifikasi',
+    ];
+
+    const rows = filteredShifts.map((s) => [
+      `"${s.id}"`,
+      `"${s.cabang?.nama || '-'}"`,
+      `"${s.kasir?.nama_lengkap || '-'}"`,
+      `"${new Date(s.dibuka_pada).toLocaleString('id-ID')}"`,
+      `"${s.ditutup_pada ? new Date(s.ditutup_pada).toLocaleString('id-ID') : '-'}"`,
+      `"${s.status.toUpperCase()}"`,
+      s.kas_awal,
+      s.total_tunai,
+      s.total_qris,
+      s.kas_seharusnya,
+      s.uang_fisik ?? '-',
+      s.selisih ?? '-',
+      `"${(s.catatan_tutup || '').replace(/"/g, '""')}"`,
+      `"${(s.catatan_verifikasi || '').replace(/"/g, '""')}"`,
+    ].join(','));
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `rekap-shift-kasir-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Berhasil mengunduh ${filteredShifts.length} data shift ke CSV!`);
+  };
+
+  // Cetak atau Simpan sebagai PDF (Fase 8)
+  const handlePrintPdf = () => {
+    window.print();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header & Filter Bar */}
@@ -478,6 +587,46 @@ export default function LaporanClient({
                 </span>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Tombol Ekspor Laporan (Fase 8: CSV & PDF) */}
+        <div className="pt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-stone-600">
+            <Download className="w-4 h-4 text-amber-700" />
+            <span>Ekspor Data (Fase 8 - Nilai Tambah):</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={exportTransaksiCsv}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold transition shadow-xs cursor-pointer"
+              title="Unduh seluruh transaksi hasil filter ke format file CSV"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Ekspor CSV Penjualan ({filteredTransaksi.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={exportShiftCsv}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-300 text-xs font-bold transition shadow-xs cursor-pointer"
+              title="Unduh seluruh data shift hasil filter ke format file CSV"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-blue-700" />
+              <span>Ekspor CSV Rekap Shift ({filteredShifts.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrintPdf}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition shadow-xs cursor-pointer"
+              title="Cetak tampilan dashboard laporan atau simpan sebagai dokumen PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cetak / Ekspor PDF</span>
+            </button>
           </div>
         </div>
       </div>

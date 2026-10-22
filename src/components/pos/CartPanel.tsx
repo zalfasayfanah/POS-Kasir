@@ -18,6 +18,8 @@ import {
   Percent
 } from 'lucide-react';
 
+export type TipePembayaran = 'tunai' | 'qris' | 'qris_mayar';
+
 export interface CartItem {
   produk: Produk;
   jumlah: number;
@@ -33,8 +35,8 @@ interface CartPanelProps {
   onDiskonChange: (diskon: number) => void;
   alasanDiskon: string;
   onAlasanDiskonChange: (alasan: string) => void;
-  metodeBayar: MetodeBayar;
-  onMetodeBayarChange: (metode: MetodeBayar) => void;
+  metodeBayar: TipePembayaran;
+  onMetodeBayarChange: (metode: TipePembayaran) => void;
   uangDiterima: number;
   onUangDiterimaChange: (uang: number) => void;
   onCheckout: () => void;
@@ -76,7 +78,7 @@ export default function CartPanel({
 
   // Kalkulasi Kembalian (BR-07)
   const kembalian = useMemo(() => {
-    if (metodeBayar === 'qris') return 0;
+    if (metodeBayar === 'qris' || metodeBayar === 'qris_mayar') return 0;
     return Math.max(0, uangDiterima - total);
   }, [metodeBayar, uangDiterima, total]);
 
@@ -341,14 +343,14 @@ export default function CartPanel({
               Metode Pembayaran (BR-07)
             </span>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               <button
                 type="button"
                 onClick={() => {
                   onMetodeBayarChange('tunai');
                   onUangDiterimaChange(total);
                 }}
-                className={`py-2.5 px-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
+                className={`py-2 px-1.5 rounded-2xl border text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition ${
                   metodeBayar === 'tunai'
                     ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
                     : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-50'
@@ -364,14 +366,33 @@ export default function CartPanel({
                   onMetodeBayarChange('qris');
                   onUangDiterimaChange(total);
                 }}
-                className={`py-2.5 px-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
+                className={`py-2 px-1.5 rounded-2xl border text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition ${
                   metodeBayar === 'qris'
                     ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
                     : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-50'
                 }`}
               >
                 <QrCode className="w-4 h-4" />
-                <span>QRIS Manual</span>
+                <span>QRIS Statis</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  onMetodeBayarChange('qris_mayar');
+                  onUangDiterimaChange(total);
+                }}
+                className={`relative py-2 px-1.5 rounded-2xl border text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition ${
+                  metodeBayar === 'qris_mayar'
+                    ? 'bg-amber-800 text-white border-amber-800 shadow-sm ring-2 ring-amber-400'
+                    : 'bg-amber-50/70 text-amber-900 border-amber-200 hover:bg-amber-100'
+                }`}
+              >
+                <span className="absolute -top-1.5 -right-1 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[8px] font-black uppercase tracking-wider">
+                  Mayar
+                </span>
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>QRIS Dinamis</span>
               </button>
             </div>
 
@@ -437,10 +458,23 @@ export default function CartPanel({
                   </div>
                 )}
               </div>
+            ) : metodeBayar === 'qris_mayar' ? (
+              <div className="p-3.5 bg-gradient-to-br from-amber-50 to-orange-50/50 rounded-2xl border border-amber-200/90 text-xs text-amber-950 space-y-1.5 shadow-xs">
+                <div className="flex items-center justify-between font-medium">
+                  <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    QRIS Dinamis Mayar Sandbox
+                  </span>
+                  <span className="font-bold font-mono text-amber-950">{formatRupiah(total)}</span>
+                </div>
+                <p className="text-[10.5px] text-stone-600 leading-relaxed">
+                  Tagihan invoice QRIS dinamis akan dibuat via Mayar API V2 dengan timer 10 menit, penguncian stok, dan verifikasi otomatis (PRD Bagian 11).
+                </p>
+              </div>
             ) : (
               <div className="p-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs text-stone-600 space-y-1">
                 <div className="flex items-center justify-between font-medium">
-                  <span>Nominal QRIS:</span>
+                  <span>Nominal QRIS Statis:</span>
                   <span className="font-bold font-mono text-stone-900">{formatRupiah(total)}</span>
                 </div>
                 <p className="text-[10px] text-stone-500 leading-relaxed">
@@ -458,17 +492,25 @@ export default function CartPanel({
             className={`w-full py-3.5 px-4 rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-2 transition ${
               isCheckoutDisabled
                 ? 'bg-stone-300 text-stone-500 cursor-not-allowed shadow-none'
+                : metodeBayar === 'qris_mayar'
+                ? 'bg-amber-800 hover:bg-amber-700 active:bg-amber-900 text-white shadow-amber-950/25 active:scale-[0.99]'
                 : 'bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white shadow-amber-950/20 active:scale-[0.99]'
             }`}
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Menyimpan Transaksi...</span>
+                <span>
+                  {metodeBayar === 'qris_mayar' ? 'Membuat Tagihan Mayar...' : 'Menyimpan Transaksi...'}
+                </span>
               </div>
             ) : (
               <>
-                <span>Bayar Sekarang · {formatRupiah(total)}</span>
+                <span>
+                  {metodeBayar === 'qris_mayar'
+                    ? `Buat Tagihan QRIS Mayar · ${formatRupiah(total)}`
+                    : `Bayar Sekarang · ${formatRupiah(total)}`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}

@@ -157,6 +157,24 @@ export async function tutupShiftAction(formData: FormData): Promise<ShiftActionR
     return { success: false, error: 'Anda hanya dapat menutup shift milik Anda sendiri.' };
   }
 
+  // Validasi PRD Bagian 11 poin 5: Shift tidak dapat ditutup selama masih ada transaksi menunggu_bayar
+  const { count: pendingTrxCount, error: pendingTrxError } = await (supabase
+    .from('transaksi') as any)
+    .select('id', { count: 'exact', head: true })
+    .eq('shift_id', shift.id)
+    .eq('status', 'menunggu_bayar');
+
+  if (pendingTrxError) {
+    return { success: false, error: `Gagal memeriksa transaksi pending: ${pendingTrxError.message}` };
+  }
+
+  if (pendingTrxCount && pendingTrxCount > 0) {
+    return {
+      success: false,
+      error: `Shift tidak dapat ditutup karena masih terdapat ${pendingTrxCount} transaksi QRIS berstatus 'menunggu_bayar'. Selesaikan pembayaran atau batalkan transaksi terlebih dahulu (PRD Bagian 11).`,
+    };
+  }
+
   // Hitung akumulasi riil dari transaksi lunas pada shift ini
   const { data: transaksiList, error: trxError } = await (supabase
     .from('transaksi') as any)

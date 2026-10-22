@@ -3,9 +3,11 @@
 import React, { useState, useMemo, useTransition } from 'react';
 import type { Profile, ShiftKasir, Produk, MetodeBayar, Transaksi } from '@/types/database';
 import ProductCard from './ProductCard';
-import CartPanel, { type CartItem } from './CartPanel';
+import CartPanel, { type CartItem, type TipePembayaran } from './CartPanel';
 import ThermalReceipt from './ThermalReceipt';
+import MayarQrisModal from './MayarQrisModal';
 import { prosesTransaksiAction } from '@/app/actions/pos';
+import { buatTransaksiMayarAction } from '@/app/actions/mayar';
 import { toast } from 'sonner';
 import { 
   Search, 
@@ -45,11 +47,12 @@ export default function PosClient({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [diskon, setDiskon] = useState<number>(0);
   const [alasanDiskon, setAlasanDiskon] = useState<string>('');
-  const [metodeBayar, setMetodeBayar] = useState<MetodeBayar>('tunai');
+  const [metodeBayar, setMetodeBayar] = useState<TipePembayaran>('tunai');
   const [uangDiterima, setUangDiterima] = useState<number>(0);
 
-  // State Modal Struk
+  // State Modal Struk & Modal Mayar QRIS
   const [activeReceipt, setActiveReceipt] = useState<Transaksi | null>(null);
+  const [pendingMayar, setPendingMayar] = useState<{ transaksi: Transaksi; invoice: any } | null>(null);
   const [isPending, startTransition] = useTransition();
 
   // Kategori Menu Tabs
@@ -181,7 +184,7 @@ export default function PosClient({
       return;
     }
 
-    const kembalian = metodeBayar === 'qris' ? 0 : Math.max(0, uangDiterima - total);
+    const kembalian = (metodeBayar === 'qris' || metodeBayar === 'qris_mayar') ? 0 : Math.max(0, uangDiterima - total);
 
     startTransition(async () => {
       try {
@@ -191,8 +194,8 @@ export default function PosClient({
           diskon,
           alasan_diskon: diskon > 0 ? alasanDiskon.trim() : null,
           total,
-          metode_bayar: metodeBayar,
-          uang_diterima: metodeBayar === 'qris' ? total : uangDiterima,
+          metode_bayar: (metodeBayar === 'qris_mayar' ? 'qris' : metodeBayar) as MetodeBayar,
+          uang_diterima: (metodeBayar === 'qris' || metodeBayar === 'qris_mayar') ? total : uangDiterima,
           kembalian,
           items: cart.map((i) => ({
             produk_id: i.produk.id,
@@ -200,6 +203,23 @@ export default function PosClient({
           })),
         };
 
+        // Jika metode QRIS Dinamis Mayar (Fase 8 - PRD Bagian 11)
+        if (metodeBayar === 'qris_mayar') {
+          const res = await buatTransaksiMayarAction(payload);
+          if (!res.success || !res.transaksi || !res.invoice) {
+            toast.error(res.error || 'Gagal membuat tagihan QRIS Mayar.');
+            return;
+          }
+
+          toast.success(res.message || 'Tagihan QRIS Mayar berhasil dibuat!');
+          setPendingMayar({
+            transaksi: res.transaksi,
+            invoice: res.invoice,
+          });
+          return;
+        }
+
+        // Metode Standar (Tunai & QRIS Manual)
         const res = await prosesTransaksiAction(payload);
 
         if (!res.success) {
@@ -354,6 +374,22 @@ export default function PosClient({
           />
         </div>
       </div>
+
+      {/* Modal QRIS Dinamis Mayar Sandbox */}
+      {pendingMayar && (
+        <MayarQrisModal
+          transaksi={pendingMayar.transaksi}
+          invoice={pendingMayar.invoice}
+          onPaymentSuccess={(paidTrx) => {
+            setPendingMayar(null);
+            setActiveReceipt(paidTrx);
+            handleClearCart();
+          }}
+          onClose={() => {
+            setPendingMayar(null);
+          }}
+        />
+      )}
 
       {/* Modal Struk Siap Cetak (Thermal 58mm) */}
       {activeReceipt && (
