@@ -198,14 +198,14 @@ export default function MayarQrisModal({
                   className="w-52 h-52 mx-auto rounded-xl object-contain transition duration-200 group-hover:scale-105"
                 />
                 <div className="mt-2 text-[11px] text-stone-500 font-medium">
-                  Scan dengan GoPay, OVO, Dana, BCA, atau Mobile Banking
+                  Pindai dengan <span className="font-bold text-stone-700">Kamera HP / Lens</span> untuk membuka invoice di HP pembeli
                 </div>
               </div>
 
               {/* Countdown Timer (10 Menit) */}
               <div className="flex items-center justify-center gap-2 text-stone-700 bg-stone-100 py-2.5 px-4 rounded-2xl w-fit mx-auto border border-stone-200">
                 <Clock className="w-4 h-4 text-amber-700 animate-spin" />
-                <span className="text-xs font-semibold">Batas Waktu Pembayaran:</span>
+                <span className="text-xs font-semibold">Batas Waktu:</span>
                 <span className={`text-sm font-black font-mono tracking-wider ${
                   secondsRemaining < 60 ? 'text-red-600 animate-pulse' : 'text-amber-800'
                 }`}>
@@ -219,17 +219,20 @@ export default function MayarQrisModal({
                 <span>{statusMessage}</span>
               </div>
 
-              {/* Tautan Buka Sandbox Mayar */}
-              <div className="pt-1">
+              {/* Tombol Langsung Buka Laman Bayar Mayar */}
+              <div className="pt-2 space-y-2">
                 <a
                   href={paymentLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold shadow-md transition"
+                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-800/20 transition-all hover:scale-[1.02]"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Buka Halaman Pembayaran Mayar (Simulasi Uji)</span>
+                  <ExternalLink className="w-4 h-4 text-amber-300" />
+                  <span>Buka Halaman Pembayaran Mayar (Bayar Sekarang)</span>
                 </a>
+                <p className="text-[11px] text-stone-500 leading-relaxed">
+                  Laman tagihan Mayar terbuka di tab baru. Setelah pembayaran selesai di Mayar, kasir ini otomatis mendeteksi dan menerbitkan struk.
+                </p>
               </div>
             </div>
           )}

@@ -36,9 +36,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isAuthPage = pathname === '/login' || pathname.startsWith('/auth');
+  const isApiRoute = pathname.startsWith('/api/');
 
-  // 2. Jika belum login dan mencoba membuka halaman yang diproteksi
-  if (!user && !isAuthPage) {
+  // 2. Jika belum login dan mencoba membuka halaman yang diproteksi (kecuali endpoint API/Webhook)
+  if (!user && !isAuthPage && !isApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);

@@ -212,6 +212,17 @@ export default function PosClient({
           }
 
           toast.success(res.message || 'Tagihan QRIS Mayar berhasil dibuat!');
+          
+          // Otomatis buka link pembayaran Mayar di tab baru agar langsung ke laman bayar
+          const payUrl = res.invoice.paymentUrl || res.invoice.link;
+          if (payUrl && typeof window !== 'undefined') {
+            try {
+              window.open(payUrl, '_blank');
+            } catch (e) {
+              console.warn('Popup blocked or failed to open:', e);
+            }
+          }
+
           setPendingMayar({
             transaksi: res.transaksi,
             invoice: res.invoice,
