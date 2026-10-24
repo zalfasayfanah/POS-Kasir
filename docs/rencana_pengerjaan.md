@@ -225,17 +225,17 @@ graph TD
 ---
 
 #### **Fase 10: Deployment Netlify, Pemeriksaan Kesiapan & Video Demo**
-- [ ] Deploy proyek ke Netlify terhubung dengan repository GitHub publik.
-- [ ] Konfigurasi Environment Variables di Netlify:
+- [x] Deploy proyek ke Netlify terhubung dengan repository GitHub publik.
+- [x] Konfigurasi Environment Variables di Netlify:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE_KEY` (hanya di server)
   - `MAYAR_API_KEY` (jika menggunakan fitur Mayar)
-- [ ] Pengaturan Supabase Auth: Daftarkan URL Netlify ke Site URL dan Redirect URLs.
-- [ ] Pasang `<meta name="robots" content="noindex, nofollow" />` di root layout.
-- [ ] Audit Keamanan & Kesiapan Rilis:
-  - Pastikan `.env.local` tidak terlacak di Git (`.gitignore`).
-  - Uji login semua akun uji dari browser Incognito pada URL Netlify publik.
+- [x] Pengaturan Supabase Auth: Daftarkan URL Netlify ke Site URL dan Redirect URLs.
+- [x] Pasang `<meta name="robots" content="noindex, nofollow" />` di root layout.
+- [x] Audit Keamanan & Kesiapan Rilis:
+  - [x] Pastikan `.env.local` tidak terlacak di Git (`.gitignore`).
+  - [ ] Uji login semua akun uji dari browser Incognito pada URL Netlify publik.
 - [ ] Perekaman Video Demo (durasi 3-5 menit):
   - Pembuka identitas diri & aplikasi (15 detik).
   - Alur utama dengan 3 akun berbeda (2-3 menit).
