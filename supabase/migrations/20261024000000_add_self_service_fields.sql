@@ -22,7 +22,10 @@ BEGIN
     END IF;
 END $$;
 
--- 3. Update Stored Procedure create_transaksi_atomic dengan parameter opsional
+-- 3. Hapus versi lama dan buat Stored Procedure create_transaksi_atomic dengan parameter baru
+DROP FUNCTION IF EXISTS public.create_transaksi_atomic(UUID, INT, INT, TEXT, INT, TEXT, INT, INT, JSONB);
+DROP FUNCTION IF EXISTS public.create_transaksi_atomic(UUID, INT, INT, TEXT, INT, TEXT, INT, INT, JSONB, TEXT, TEXT, TEXT);
+
 CREATE OR REPLACE FUNCTION public.create_transaksi_atomic(
     p_shift_id UUID,
     p_subtotal INT,
@@ -274,4 +277,4 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.create_transaksi_atomic TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.create_transaksi_atomic(UUID, INT, INT, TEXT, INT, TEXT, INT, INT, JSONB, TEXT, TEXT, TEXT) TO authenticated, service_role;
