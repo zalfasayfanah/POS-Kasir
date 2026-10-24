@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  ExternalLink,
   Copy,
   Receipt,
   User,
@@ -301,13 +300,12 @@ export default function MayarTransactionsViewer({
                 <th className="py-3 px-4">Deskripsi Tagihan</th>
                 <th className="py-3 px-4 text-right">Nominal</th>
                 <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 text-xs">
               {paginatedTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-stone-400">
+                  <td colSpan={6} className="text-center py-12 text-stone-400">
                     <AlertCircle className="w-8 h-8 mx-auto mb-2 stroke-1 text-stone-300" />
                     Tidak ada riwayat transaksi Mayar yang sesuai kriteria pencarian.
                   </td>
@@ -409,23 +407,6 @@ export default function MayarTransactionsViewer({
                             <Clock className="w-3 h-3" />
                             MENUNGGU
                           </span>
-                        )}
-                      </td>
-
-                      {/* Aksi */}
-                      <td className="py-3 px-4 text-center whitespace-nowrap">
-                        {tx.paymentUrl ? (
-                          <a
-                            href={tx.paymentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200 transition text-[11px] font-medium"
-                          >
-                            <span>Buka Mayar</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        ) : (
-                          <span className="text-stone-300 text-xs">-</span>
                         )}
                       </td>
                     </tr>
