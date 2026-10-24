@@ -30,6 +30,46 @@ export interface MayarInvoiceResponse {
   status: string;
   invoiceCode?: string;
   expiredAt?: string | number;
+  qrImageUrl?: string;
+  qrString?: string;
+}
+
+/**
+ * Buat QRIS Dinamis langsung dari Mayar API V2 (/qr-codes/create)
+ */
+export async function createMayarDynamicQr(
+  amount: number,
+  name?: string
+): Promise<{ url: string; qrString: string } | null> {
+  const apiKey = process.env.MAYAR_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const res = await fetch(`${MAYAR_BASE_URL}/qr-codes/create`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: Math.round(amount),
+        name: name || 'Pembayaran Lumbung Kopi',
+      }),
+      cache: 'no-store',
+    });
+
+    const body = await res.json().catch(() => null);
+    if (res.ok && body && body.data) {
+      return {
+        url: body.data.url,
+        qrString: body.data.qrString,
+      };
+    }
+    return null;
+  } catch (e) {
+    console.warn('Info: Gagal membuat direct QRIS Mayar, fallback ke invoice link:', e);
+    return null;
+  }
 }
 
 /**
@@ -71,6 +111,15 @@ export async function createMayarInvoice(options: CreateInvoiceOptions): Promise
   }
 
   const data = body.data;
+
+  // Generate direct QRIS image langsung dari Mayar API V2
+  let directQr: { url: string; qrString: string } | null = null;
+  try {
+    directQr = await createMayarDynamicQr(data.amount, options.name);
+  } catch (e) {
+    // Non-fatal
+  }
+
   return {
     id: data.id,
     link: data.link || data.paymentUrl,
@@ -79,6 +128,8 @@ export async function createMayarInvoice(options: CreateInvoiceOptions): Promise
     status: data.status,
     invoiceCode: data.invoiceCode,
     expiredAt: data.expiredAt,
+    qrImageUrl: directQr?.url,
+    qrString: directQr?.qrString,
   };
 }
 
