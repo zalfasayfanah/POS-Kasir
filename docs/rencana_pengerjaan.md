@@ -213,14 +213,14 @@ graph TD
 ---
 
 #### **Fase 9: Pengujian Lengkap (Test Plan Execution)**
-- [ ] Menjalankan dan mendokumentasikan hasil pengujian minimal 15 test cases pada `docs/test-plan.md`.
-- [ ] Uji Kasus Batas (Edge Cases):
-  - Pembelian stok tersisa 1 dan stok 0.
-  - Dua kasir checkout produk stok 1 secara bersamaan (uji konkurensi).
-  - Diskon tepat 10% vs diskon 10.1% (harus ditolak).
-  - Pembayaran tunai kurang Rp1 (harus ditolak).
-  - Tutup shift selisih Rp20.001 tanpa catatan (harus ditolak).
-  - Uji URL bypass Kasir/Kepala Toko ke data rahasia harga modal.
+- [x] Menjalankan dan mendokumentasikan hasil pengujian minimal 15 test cases pada `docs/test-plan.md` (Total 18 Test Cases 100% Lulus).
+- [x] Uji Kasus Batas (Edge Cases):
+  - [x] Pembelian stok tersisa 1 dan stok 0 (TC-05: rollback atomic & anti minus).
+  - [x] Dua kasir checkout produk stok 1 secara bersamaan (TC-06: row-level lock `FOR UPDATE` serializes concurrency).
+  - [x] Diskon tepat 10% vs diskon 10.1% (TC-09: diskon > 10% ditolak database & client).
+  - [x] Pembayaran tunai kurang Rp1 (TC-10: check constraint `chk_tunai_validasi` menolak).
+  - [x] Tutup shift selisih Rp20.001 tanpa catatan (TC-14: `chk_shift_selisih_catatan` menolak).
+  - [x] Uji URL bypass Kasir/Kepala Toko ke data rahasia harga modal (TC-16: RLS memblokir non-owner).
 
 ---
 
