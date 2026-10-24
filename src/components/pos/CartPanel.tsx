@@ -15,7 +15,9 @@ import {
   CheckCircle, 
   ArrowRight,
   Sparkles,
-  Percent
+  Percent,
+  User,
+  Coffee
 } from 'lucide-react';
 
 export type TipePembayaran = 'tunai' | 'qris' | 'qris_mayar';
@@ -39,6 +41,10 @@ interface CartPanelProps {
   onMetodeBayarChange: (metode: TipePembayaran) => void;
   uangDiterima: number;
   onUangDiterimaChange: (uang: number) => void;
+  nomorMeja: string;
+  onNomorMejaChange: (meja: string) => void;
+  namaPelanggan: string;
+  onNamaPelangganChange: (nama: string) => void;
   onCheckout: () => void;
   isSubmitting: boolean;
 }
@@ -56,6 +62,10 @@ export default function CartPanel({
   onMetodeBayarChange,
   uangDiterima,
   onUangDiterimaChange,
+  nomorMeja,
+  onNomorMejaChange,
+  namaPelanggan,
+  onNamaPelangganChange,
   onCheckout,
   isSubmitting,
 }: CartPanelProps) {
@@ -231,6 +241,38 @@ export default function CartPanel({
       {/* Bagian Perhitungan & Pembayaran */}
       {cart.length > 0 && (
         <div className="p-4 sm:p-5 border-t border-stone-200 bg-stone-50/50 space-y-4 shrink-0">
+          {/* Identitas Pesanan: Nama Pelanggan & Nomor Meja */}
+          <div className="p-3 bg-white rounded-2xl border border-stone-200/90 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-stone-700 flex items-center gap-1.5 uppercase tracking-wide">
+                <User className="w-3.5 h-3.5 text-amber-600" />
+                Data Pelanggan & Meja
+              </span>
+              <span className="text-[10px] text-stone-400 font-medium">(Opsional)</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <input
+                  type="text"
+                  value={namaPelanggan}
+                  onChange={(e) => onNamaPelangganChange(e.target.value)}
+                  placeholder="Nama Pelanggan"
+                  className="w-full px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50/50 text-xs font-semibold text-stone-900 placeholder:text-stone-400 focus:outline-none focus:bg-white focus:border-amber-600 focus:ring-1 focus:ring-amber-600 transition"
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  value={nomorMeja}
+                  onChange={(e) => onNomorMejaChange(e.target.value)}
+                  placeholder="No. Meja (cth: Meja 05)"
+                  className="w-full px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50/50 text-xs font-semibold text-stone-900 placeholder:text-stone-400 focus:outline-none focus:bg-white focus:border-amber-600 focus:ring-1 focus:ring-amber-600 transition"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Subtotal & Diskon Section */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-stone-600">

@@ -239,9 +239,26 @@ export default function TransaksiClient({
                         isVoid ? 'bg-red-50/30' : ''
                       }`}
                     >
-                      {/* Nomor Struk */}
-                      <td className="py-3 px-4 font-mono font-bold text-stone-900">
-                        {trx.nomor_struk}
+                      {/* Nomor Struk & Info Meja */}
+                      <td className="py-3 px-4">
+                        <div className="font-mono font-bold text-stone-900">{trx.nomor_struk}</div>
+                        {(trx.nama_pelanggan || trx.nomor_meja || trx.sumber_pesanan === 'self_service') && (
+                          <div className="text-[11px] text-stone-500 flex flex-wrap items-center gap-1.5 mt-0.5">
+                            {trx.nama_pelanggan && (
+                              <span className="font-medium text-stone-700">{trx.nama_pelanggan}</span>
+                            )}
+                            {trx.nomor_meja && (
+                              <span className="font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 text-[10px]">
+                                {trx.nomor_meja}
+                              </span>
+                            )}
+                            {trx.sumber_pesanan === 'self_service' && (
+                              <span className="text-[9px] font-black text-amber-700 bg-amber-100/70 px-1 rounded uppercase tracking-wider">
+                                Self-Service
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </td>
 
                       {/* Waktu */}
@@ -254,9 +271,13 @@ export default function TransaksiClient({
                         {trx.cabang?.kode} · {trx.cabang?.nama}
                       </td>
 
-                      {/* Kasir */}
+                      {/* Kasir / Pemesan */}
                       <td className="py-3 px-4 text-stone-700 text-xs">
-                        {trx.kasir?.nama_lengkap || '-'}
+                        {trx.sumber_pesanan === 'self_service' ? (
+                          <span className="text-amber-800 font-semibold italic">Pelanggan Meja</span>
+                        ) : (
+                          trx.kasir?.nama_lengkap || '-'
+                        )}
                       </td>
 
                       {/* Metode */}

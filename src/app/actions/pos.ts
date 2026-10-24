@@ -20,6 +20,8 @@ export interface CheckoutPayload {
   uang_diterima: number;
   kembalian: number;
   items: CheckoutItemPayload[];
+  nomor_meja?: string | null;
+  nama_pelanggan?: string | null;
 }
 
 export interface CheckoutActionResult {
@@ -228,6 +230,9 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
       p_uang_diterima: uangDiterima,
       p_kembalian: kembalian,
       p_items: payload.items,
+      p_nomor_meja: payload.nomor_meja?.trim() || null,
+      p_nama_pelanggan: payload.nama_pelanggan?.trim() || 'Pelanggan',
+      p_sumber_pesanan: 'kasir',
     }
   );
 

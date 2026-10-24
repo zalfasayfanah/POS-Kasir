@@ -93,6 +93,27 @@ export default function ThermalReceipt({
                 <span className="text-stone-500">Kasir:</span>
                 <span>{transaksi.kasir?.nama_lengkap || 'Kasir'}</span>
               </div>
+              {transaksi.nama_pelanggan && (
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Pelanggan:</span>
+                  <span className="font-semibold text-stone-900">{transaksi.nama_pelanggan}</span>
+                </div>
+              )}
+              {transaksi.nomor_meja && (
+                <div className="flex justify-between items-center">
+                  <span className="text-stone-500">No. Meja:</span>
+                  <span className="font-black text-amber-950 bg-amber-100/80 px-1.5 py-0.2 rounded text-[10.5px]">
+                    {transaksi.nomor_meja}
+                  </span>
+                </div>
+              )}
+              {transaksi.sumber_pesanan === 'self_service' && (
+                <div className="text-center pt-1">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full inline-block">
+                    ★ Pesanan Meja (Self-Service)
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-dashed border-stone-400 my-2" />

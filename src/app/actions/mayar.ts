@@ -126,8 +126,11 @@ export async function buatTransaksiMayarAction(payload: CheckoutPayload): Promis
       });
     }
 
+    const customerLabel = payload.nama_pelanggan?.trim() || 'Pelanggan';
+    const tableLabel = payload.nomor_meja?.trim() ? ` (Meja ${payload.nomor_meja.trim()})` : '';
+
     mayarInvoice = await createMayarInvoice({
-      name: `Pelanggan - ${profile.nama_lengkap}`,
+      name: `${customerLabel}${tableLabel} - Kasir ${profile.nama_lengkap}`,
       description: `Tagihan POS Kasir Lumbung Kopi (${new Date().toLocaleTimeString('id-ID')})`,
       items: invoiceItems,
     });
@@ -151,6 +154,9 @@ export async function buatTransaksiMayarAction(payload: CheckoutPayload): Promis
       p_uang_diterima: expectedTotal,
       p_kembalian: 0,
       p_items: payload.items,
+      p_nomor_meja: payload.nomor_meja?.trim() || null,
+      p_nama_pelanggan: payload.nama_pelanggan?.trim() || 'Pelanggan',
+      p_sumber_pesanan: 'kasir',
     }
   );
 

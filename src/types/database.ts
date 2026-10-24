@@ -119,6 +119,9 @@ export interface Transaksi {
   void_pada: string | null;
   alasan_void: string | null;
   mayar_invoice_id: string | null;
+  nomor_meja?: string | null;
+  nama_pelanggan?: string | null;
+  sumber_pesanan?: 'kasir' | 'self_service';
   items?: TransaksiItem[];
   cabang?: Cabang | null;
   kasir?: Profile | null;

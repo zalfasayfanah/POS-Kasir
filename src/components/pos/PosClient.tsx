@@ -49,6 +49,8 @@ export default function PosClient({
   const [alasanDiskon, setAlasanDiskon] = useState<string>('');
   const [metodeBayar, setMetodeBayar] = useState<TipePembayaran>('tunai');
   const [uangDiterima, setUangDiterima] = useState<number>(0);
+  const [namaPelanggan, setNamaPelanggan] = useState<string>('');
+  const [nomorMeja, setNomorMeja] = useState<string>('');
 
   // State Modal Struk & Modal Mayar QRIS
   const [activeReceipt, setActiveReceipt] = useState<Transaksi | null>(null);
@@ -158,6 +160,8 @@ export default function PosClient({
     setDiskon(0);
     setAlasanDiskon('');
     setUangDiterima(0);
+    setNamaPelanggan('');
+    setNomorMeja('');
   };
 
   // Eksekusi Checkout
@@ -201,6 +205,8 @@ export default function PosClient({
             produk_id: i.produk.id,
             jumlah: i.jumlah,
           })),
+          nomor_meja: nomorMeja.trim() || null,
+          nama_pelanggan: namaPelanggan.trim() || 'Pelanggan',
         };
 
         // Jika metode QRIS Dinamis Mayar (Fase 8 - PRD Bagian 11)
@@ -413,6 +419,10 @@ export default function PosClient({
             onMetodeBayarChange={setMetodeBayar}
             uangDiterima={uangDiterima}
             onUangDiterimaChange={setUangDiterima}
+            nomorMeja={nomorMeja}
+            onNomorMejaChange={setNomorMeja}
+            namaPelanggan={namaPelanggan}
+            onNamaPelangganChange={setNamaPelanggan}
             onCheckout={handleCheckout}
             isSubmitting={isPending}
           />
