@@ -65,25 +65,42 @@ DECLARE
     v_calc_subtotal INT := 0;
     v_nama_pelanggan_final TEXT;
 BEGIN
-    v_kasir_id := auth.uid();
+    -- 1. Validasi kasir & shift sesuai sumber pesanan
+    IF p_sumber_pesanan = 'self_service' THEN
+        -- Pesanan Meja Self-Service: Validasi shift kasir cabang harus berstatus buka
+        SELECT status, cabang_id, kasir_id INTO v_shift_status, v_cabang_id, v_kasir_id
+        FROM public.shift_kasir
+        WHERE id = p_shift_id
+        FOR UPDATE;
 
-    -- 1. Validasi kasir dan peran
-    IF NOT public.get_auth_is_active() THEN
-        RAISE EXCEPTION 'Akun kasir tidak aktif atau tidak memiliki izin.';
-    END IF;
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Shift kasir di cabang ini tidak ditemukan.';
+        END IF;
 
-    -- 2. Validasi shift kasir (harus berstatus buka dan milik kasir pemanggil)
-    SELECT status, cabang_id INTO v_shift_status, v_cabang_id
-    FROM public.shift_kasir
-    WHERE id = p_shift_id AND kasir_id = v_kasir_id
-    FOR UPDATE;
+        IF v_shift_status <> 'buka' THEN
+            RAISE EXCEPTION 'Cafe saat ini belum buka atau kasir belum standby (BR-02).';
+        END IF;
+    ELSE
+        v_kasir_id := auth.uid();
 
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Shift kasir tidak ditemukan atau bukan milik Anda.';
-    END IF;
+        -- Validasi akun kasir staf aktif
+        IF NOT public.get_auth_is_active() THEN
+            RAISE EXCEPTION 'Akun kasir tidak aktif atau tidak memiliki izin.';
+        END IF;
 
-    IF v_shift_status <> 'buka' THEN
-        RAISE EXCEPTION 'Transaksi hanya dapat dibuat saat shift kasir berstatus buka (BR-02).';
+        -- Validasi shift kasir (harus berstatus buka dan milik kasir pemanggil)
+        SELECT status, cabang_id INTO v_shift_status, v_cabang_id
+        FROM public.shift_kasir
+        WHERE id = p_shift_id AND kasir_id = v_kasir_id
+        FOR UPDATE;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Shift kasir tidak ditemukan atau bukan milik Anda.';
+        END IF;
+
+        IF v_shift_status <> 'buka' THEN
+            RAISE EXCEPTION 'Transaksi hanya dapat dibuat saat shift kasir berstatus buka (BR-02).';
+        END IF;
     END IF;
 
     -- 3. Lock baris cabang dengan FOR UPDATE untuk urutan nomor struk harian (BR-04)
