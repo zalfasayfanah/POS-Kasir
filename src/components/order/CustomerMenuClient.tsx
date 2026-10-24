@@ -322,15 +322,16 @@ export default function CustomerMenuClient({
                   </span>
 
                   {itemInCart ? (
-                    <div className="flex items-center gap-1 bg-amber-50 border border-amber-300 rounded-xl p-0.5">
+                    <div className="flex items-center gap-0.5 bg-amber-50 border border-amber-300 rounded-xl p-0.5 shadow-2xs">
                       <button
                         type="button"
                         onClick={() => handleUpdateQty(prod.id, itemInCart.jumlah - 1)}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center text-amber-900 hover:bg-amber-200 transition"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center text-amber-900 hover:bg-amber-200 active:scale-95 transition"
+                        title="Kurangi"
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-3 h-3 stroke-[2.5]" />
                       </button>
-                      <span className="w-5 text-center font-bold text-xs font-mono text-amber-950">
+                      <span className="w-4 text-center font-bold text-xs font-mono text-amber-950">
                         {itemInCart.jumlah}
                       </span>
                       <button
@@ -341,9 +342,10 @@ export default function CustomerMenuClient({
                           itemInCart.jumlah >= stock
                         }
                         onClick={() => handleUpdateQty(prod.id, itemInCart.jumlah + 1)}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center text-amber-900 hover:bg-amber-200 transition disabled:opacity-30"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center text-amber-900 hover:bg-amber-200 active:scale-95 transition disabled:opacity-30"
+                        title="Tambah"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-3 h-3 stroke-[2.5]" />
                       </button>
                     </div>
                   ) : (
@@ -351,14 +353,14 @@ export default function CustomerMenuClient({
                       type="button"
                       disabled={isOutOfStock || !isOpen}
                       onClick={() => handleAddToCart(prod)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition ${
+                      aria-label={`Tambah ${prod.nama}`}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center transition shrink-0 ${
                         isOutOfStock || !isOpen
                           ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                          : 'bg-amber-800 hover:bg-amber-700 text-white shadow-2xs active:scale-95'
+                          : 'bg-amber-800 hover:bg-amber-700 active:bg-amber-900 text-white shadow-xs active:scale-90'
                       }`}
                     >
-                      <Plus className="w-3 h-3" />
-                      <span>Tambah</span>
+                      <Plus className="w-4 h-4 stroke-[2.5]" />
                     </button>
                   )}
                 </div>
