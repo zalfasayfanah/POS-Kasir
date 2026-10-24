@@ -19,8 +19,11 @@ import {
   ShoppingBag,
   Store,
   Clock,
-  UserCheck
+  UserCheck,
+  QrCode
 } from 'lucide-react';
+import TableOrderAlert from './TableOrderAlert';
+import TableQrGeneratorModal from './TableQrGeneratorModal';
 import { formatRupiah } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -55,6 +58,7 @@ export default function PosClient({
   // State Modal Struk & Modal Mayar QRIS
   const [activeReceipt, setActiveReceipt] = useState<Transaksi | null>(null);
   const [pendingMayar, setPendingMayar] = useState<{ transaksi: Transaksi; invoice: any } | null>(null);
+  const [isTableQrModalOpen, setIsTableQrModalOpen] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
   // Kategori Menu Tabs
@@ -320,9 +324,18 @@ export default function PosClient({
             </p>
           </div>
 
+          <button
+            type="button"
+            onClick={() => setIsTableQrModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold transition shadow-2xs"
+          >
+            <QrCode className="w-4 h-4 text-amber-700" />
+            <span>Cetak QR Meja</span>
+          </button>
+
           <Link
             href="/shift"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition shadow-xs"
           >
             <Clock className="w-4 h-4 text-stone-500" />
             <span>Shift & Laci Kas</span>
@@ -454,6 +467,27 @@ export default function PosClient({
             setActiveReceipt(null);
             handleClearCart();
           }}
+        />
+      )}
+
+      {/* Realtime Alert Lonceng & Tiket Pesanan Meja Masuk */}
+      <TableOrderAlert
+        cabangId={activeShift.cabang_id}
+        onOpenReceipt={(trx) => setActiveReceipt(trx)}
+      />
+
+      {/* Modal Generator Cetak QR Meja */}
+      {isTableQrModalOpen && (
+        <TableQrGeneratorModal
+          currentCabang={
+            profile.cabang ||
+            ({
+              id: activeShift.cabang_id,
+              kode: 'BTR',
+              nama: 'Cabang Lumbung Kopi',
+            } as any)
+          }
+          onClose={() => setIsTableQrModalOpen(false)}
         />
       )}
     </div>
