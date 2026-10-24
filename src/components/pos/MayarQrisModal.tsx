@@ -187,52 +187,68 @@ export default function MayarQrisModal({
             )}
           </div>
 
-          {/* Area QR Code & Status */}
+          {/* Area Aksi Pembayaran & Status */}
           {status === 'menunggu_bayar' && (
             <div className="space-y-4">
-              {/* Gambar QR Code */}
-              <div className="relative inline-block p-4 bg-white rounded-3xl border-2 border-dashed border-amber-300 shadow-inner group">
-                <img
-                  src={qrImageSrc}
-                  alt="QRIS Pembayaran Mayar"
-                  className="w-52 h-52 mx-auto rounded-xl object-contain transition duration-200 group-hover:scale-105"
-                />
-                <div className="mt-2 text-[11px] text-stone-500 font-medium">
-                  Pindai dengan <span className="font-bold text-stone-700">Kamera HP / Lens</span> untuk membuka invoice di HP pembeli
+              {/* Tombol Utama Langsung Buka Laman Mayar */}
+              <div className="bg-amber-500/10 border border-amber-300/60 rounded-2xl p-4 text-center space-y-2.5">
+                <div className="flex items-center justify-center gap-2 text-xs font-bold text-amber-900">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Tab Pembayaran Mayar Terbuka Otomatis</span>
                 </div>
-              </div>
-
-              {/* Countdown Timer (10 Menit) */}
-              <div className="flex items-center justify-center gap-2 text-stone-700 bg-stone-100 py-2.5 px-4 rounded-2xl w-fit mx-auto border border-stone-200">
-                <Clock className="w-4 h-4 text-amber-700 animate-spin" />
-                <span className="text-xs font-semibold">Batas Waktu:</span>
-                <span className={`text-sm font-black font-mono tracking-wider ${
-                  secondsRemaining < 60 ? 'text-red-600 animate-pulse' : 'text-amber-800'
-                }`}>
-                  {timeDisplay}
-                </span>
-              </div>
-
-              {/* Status Indicator */}
-              <div className="flex items-center justify-center gap-2 text-xs font-semibold text-amber-800">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
-                <span>{statusMessage}</span>
-              </div>
-
-              {/* Tombol Langsung Buka Laman Bayar Mayar */}
-              <div className="pt-2 space-y-2">
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Silakan selesaikan pembayaran di tab Mayar. Jika tab belum terbuka, klik tombol di bawah:
+                </p>
                 <a
                   href={paymentLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-800/20 transition-all hover:scale-[1.02]"
+                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-white font-bold text-sm shadow-md shadow-amber-800/20 transition-all hover:scale-[1.02]"
                 >
                   <ExternalLink className="w-4 h-4 text-amber-300" />
-                  <span>Buka Halaman Pembayaran Mayar (Bayar Sekarang)</span>
+                  <span>Buka Halaman Pembayaran Mayar</span>
                 </a>
-                <p className="text-[11px] text-stone-500 leading-relaxed">
-                  Laman tagihan Mayar terbuka di tab baru. Setelah pembayaran selesai di Mayar, kasir ini otomatis mendeteksi dan menerbitkan struk.
-                </p>
+              </div>
+
+              {/* Countdown Timer & Polling Indicator */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                <div className="flex items-center gap-2 text-stone-700 bg-stone-100 py-2 px-3.5 rounded-xl border border-stone-200">
+                  <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin" />
+                  <span className="text-xs font-semibold">Batas Waktu:</span>
+                  <span className={`text-xs font-black font-mono tracking-wider ${
+                    secondsRemaining < 60 ? 'text-red-600 animate-pulse' : 'text-amber-800'
+                  }`}>
+                    {timeDisplay}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-semibold text-amber-800 bg-amber-50/70 py-2 px-3.5 rounded-xl border border-amber-200/50">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                  <span className="truncate max-w-[200px]">{statusMessage}</span>
+                </div>
+              </div>
+
+              {/* Opsi QR Code Cadangan (Bila Pelanggan Ingin Scan dari HP) */}
+              <div className="border border-stone-200 rounded-2xl p-3 bg-stone-50/50">
+                <details className="group cursor-pointer">
+                  <summary className="text-xs font-bold text-stone-600 hover:text-amber-800 flex items-center justify-center gap-1.5 list-none select-none">
+                    <QrCode className="w-3.5 h-3.5" />
+                    <span>Tampilkan QR Code (Scan via Kamera HP Pelanggan)</span>
+                    <span className="text-[10px] text-stone-400 group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <div className="pt-3 pb-1 text-center space-y-2">
+                    <div className="inline-block p-2.5 bg-white rounded-2xl border border-stone-200 shadow-sm">
+                      <img
+                        src={qrImageSrc}
+                        alt="QR Pembayaran Mayar"
+                        className="w-36 h-36 mx-auto rounded-lg object-contain"
+                      />
+                    </div>
+                    <p className="text-[10px] text-stone-500">
+                      Scan dengan Kamera HP / Google Lens untuk membuka invoice di HP pelanggan.
+                    </p>
+                  </div>
+                </details>
               </div>
             </div>
           )}

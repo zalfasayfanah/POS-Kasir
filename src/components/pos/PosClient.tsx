@@ -205,21 +205,54 @@ export default function PosClient({
 
         // Jika metode QRIS Dinamis Mayar (Fase 8 - PRD Bagian 11)
         if (metodeBayar === 'qris_mayar') {
+          // Buka window tab secara SINKRON langsung saat klik untuk melewati popup blocker browser
+          let payWindow: Window | null = null;
+          try {
+            payWindow = window.open('about:blank', '_blank');
+            if (payWindow) {
+              payWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <title>Menghubungkan ke Mayar...</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <style>
+                      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fafaf9; color: #44403c; text-align: center; padding: 20px; box-sizing: border-box; }
+                      .spinner { width: 44px; height: 44px; border: 4px solid #e7e5e4; border-top-color: #d97706; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 20px; }
+                      @keyframes spin { to { transform: rotate(360deg); } }
+                      h2 { margin: 0 0 8px 0; font-size: 20px; color: #1c1917; }
+                      p { margin: 0; font-size: 14px; color: #78716c; }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="spinner"></div>
+                    <h2>Menghubungkan ke Mayar...</h2>
+                    <p>Mohon tunggu sebentar, invoice pembayaran kasir sedang disiapkan.</p>
+                  </body>
+                </html>
+              `);
+            }
+          } catch (e) {
+            console.warn('Gagal pre-open tab pembayaran:', e);
+          }
+
           const res = await buatTransaksiMayarAction(payload);
           if (!res.success || !res.transaksi || !res.invoice) {
+            if (payWindow && !payWindow.closed) {
+              payWindow.close();
+            }
             toast.error(res.error || 'Gagal membuat tagihan QRIS Mayar.');
             return;
           }
 
           toast.success(res.message || 'Tagihan QRIS Mayar berhasil dibuat!');
           
-          // Otomatis buka link pembayaran Mayar di tab baru agar langsung ke laman bayar
           const payUrl = res.invoice.paymentUrl || res.invoice.link;
-          if (payUrl && typeof window !== 'undefined') {
-            try {
+          if (payUrl) {
+            if (payWindow && !payWindow.closed) {
+              payWindow.location.href = payUrl;
+            } else {
               window.open(payUrl, '_blank');
-            } catch (e) {
-              console.warn('Popup blocked or failed to open:', e);
             }
           }
 
