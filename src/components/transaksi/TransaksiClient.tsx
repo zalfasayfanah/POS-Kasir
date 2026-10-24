@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Profile, Transaksi, Cabang } from '@/types/database';
 import { formatRupiah, formatDateWIB } from '@/lib/utils';
 import { 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import VoidModal from './VoidModal';
 import ThermalReceipt from '@/components/pos/ThermalReceipt';
+import Pagination from '@/components/ui/Pagination';
 
 interface TransaksiClientProps {
   profile: Profile;
@@ -36,6 +37,13 @@ export default function TransaksiClient({
   const [metodeFilter, setMetodeFilter] = useState<'semua' | 'tunai' | 'qris'>('semua');
   const [cabangFilter, setCabangFilter] = useState<string>('semua');
   const [dateFilter, setDateFilter] = useState<'semua' | 'hari_ini' | '7_hari'>('semua');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
+  // Reset halaman saat filter berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, metodeFilter, cabangFilter, dateFilter]);
 
   // State Modal
   const [selectedVoidTrx, setSelectedVoidTrx] = useState<Transaksi | null>(null);
@@ -220,7 +228,9 @@ export default function TransaksiClient({
                   </td>
                 </tr>
               ) : (
-                filteredTransactions.map((trx) => {
+                filteredTransactions
+                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .map((trx) => {
                   const isVoid = trx.status === 'void';
                   return (
                     <tr
@@ -319,6 +329,14 @@ export default function TransaksiClient({
             </tbody>
           </table>
         </div>
+
+        {/* Kontrol Pagination (Maks 20 data per slide) */}
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredTransactions.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {/* Modal Void Transaksi */}

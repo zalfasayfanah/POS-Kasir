@@ -4,10 +4,12 @@ import { getCurrentUserProfile } from '@/app/auth/actions';
 import { redirect } from 'next/navigation';
 import PengaturanClient from '@/components/pengaturan/PengaturanClient';
 import type { Profile, AuditLog, Cabang } from '@/types/database';
+import { getMayarTransactionsHistoryAction } from '@/app/actions/mayar';
+import type { MayarInvoiceListItem } from '@/lib/mayar';
 
 export const metadata = {
-  title: 'Pengaturan & Audit Log - Lumbung Kopi dan Roti',
-  description: 'Manajemen akun staf cabang dan viewer riwayat audit log keamanan',
+  title: 'Pengaturan, Audit Log & Transaksi Mayar - Lumbung Kopi dan Roti',
+  description: 'Manajemen akun staf cabang, viewer audit log keamanan, dan riwayat transaksi gateway Mayar',
 };
 
 export default async function PengaturanPage() {
@@ -57,12 +59,24 @@ export default async function PengaturanPage() {
 
   const branches: Cabang[] = rawBranches || [];
 
+  // 4. Query riwayat transaksi Mayar (Khusus Owner)
+  let mayarTransactions: MayarInvoiceListItem[] = [];
+  try {
+    const mayarRes = await getMayarTransactionsHistoryAction();
+    if (mayarRes.success && mayarRes.data) {
+      mayarTransactions = mayarRes.data;
+    }
+  } catch (err) {
+    console.warn('[PengaturanPage] Gagal memuat transaksi Mayar:', err);
+  }
+
   return (
     <PengaturanClient
       currentProfile={profile}
       staffList={staffList}
       auditLogs={auditLogs}
       branches={branches}
+      mayarTransactions={mayarTransactions}
     />
   );
 }

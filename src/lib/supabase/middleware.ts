@@ -85,13 +85,17 @@ export async function updateSession(request: NextRequest) {
     }
 
     // 3.3 ROUTE GUARD: Periksa wewenang URL sesuai peran
+    // Helper untuk mencocokkan route secara presisi (cocok tepat atau sub-path dengan trailing slash '/')
+    const matchesRoute = (baseRoute: string, path: string) =>
+      path === baseRoute || path.startsWith(baseRoute + '/');
+
     // Batasan Hak Akses:
-    // - Kasir: hanya /kasir, /shift, /transaksi
+    // - Kasir: hanya /kasir, /shift (Shift Saya), /transaksi
     // - Kepala Toko: /transaksi, /stok, /shift-cabang, /produk, /laporan (tanpa laba)
     // - Owner: semua halaman (/kasir, /shift-cabang, /transaksi, /stok, /produk, /laporan, /pengaturan)
     if (peran === 'kasir') {
       const allowedKasir = ['/kasir', '/shift', '/transaksi'];
-      const isAllowed = allowedKasir.some((p) => pathname.startsWith(p));
+      const isAllowed = allowedKasir.some((route) => matchesRoute(route, pathname));
       if (!isAllowed) {
         const url = request.nextUrl.clone();
         url.pathname = defaultPage;
@@ -99,8 +103,9 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
       }
     } else if (peran === 'kepala_toko') {
+      // Halaman terlarang untuk Kepala Toko: /kasir (khusus Kasir/Owner), /shift (Shift Saya khusus Kasir), /pengaturan (khusus Owner)
       const forbiddenKepalaToko = ['/kasir', '/shift', '/pengaturan'];
-      const isForbidden = forbiddenKepalaToko.some((p) => pathname.startsWith(p));
+      const isForbidden = forbiddenKepalaToko.some((route) => matchesRoute(route, pathname));
       if (isForbidden) {
         const url = request.nextUrl.clone();
         url.pathname = defaultPage;

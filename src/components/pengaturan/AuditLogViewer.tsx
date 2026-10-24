@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { AuditLog } from '@/types/database';
 import { formatDateWIB } from '@/lib/utils';
 import { 
@@ -17,6 +17,7 @@ import {
   UserCheck, 
   UserX 
 } from 'lucide-react';
+import Pagination from '@/components/ui/Pagination';
 
 interface AuditLogViewerProps {
   logs: AuditLog[];
@@ -26,6 +27,13 @@ export default function AuditLogViewer({ logs }: AuditLogViewerProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAksi, setSelectedAksi] = useState<string>('semua');
   const [inspectLog, setInspectLog] = useState<AuditLog | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
+  // Reset halaman saat filter berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedAksi]);
 
   // Filter logs
   const filteredLogs = useMemo(() => {
@@ -120,7 +128,9 @@ export default function AuditLogViewer({ logs }: AuditLogViewerProps) {
                   </td>
                 </tr>
               ) : (
-                filteredLogs.map((log) => {
+                filteredLogs
+                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .map((log) => {
                   const aksiBadge = getAksiBadge(log.aksi);
                   return (
                     <tr key={log.id} className="hover:bg-stone-50/70 transition">
@@ -163,6 +173,14 @@ export default function AuditLogViewer({ logs }: AuditLogViewerProps) {
             </tbody>
           </table>
         </div>
+
+        {/* Kontrol Pagination (Maks 20 data per slide) */}
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredLogs.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {/* Modal Detail JSON Viewer */}

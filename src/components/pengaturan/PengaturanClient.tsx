@@ -14,16 +14,21 @@ import {
   Power, 
   Building2,
   Lock,
-  UserCheck
+  UserCheck,
+  CreditCard,
 } from 'lucide-react';
 import StafModal from './StafModal';
 import AuditLogViewer from './AuditLogViewer';
+import MayarTransactionsViewer from './MayarTransactionsViewer';
+import Pagination from '@/components/ui/Pagination';
+import type { MayarInvoiceListItem } from '@/lib/mayar';
 
 interface PengaturanClientProps {
   currentProfile: Profile;
   staffList: Profile[];
   auditLogs: AuditLog[];
   branches: Cabang[];
+  mayarTransactions?: MayarInvoiceListItem[];
 }
 
 export default function PengaturanClient({
@@ -31,10 +36,13 @@ export default function PengaturanClient({
   staffList,
   auditLogs,
   branches,
+  mayarTransactions = [],
 }: PengaturanClientProps) {
-  const [activeTab, setActiveTab] = useState<'staf' | 'audit'>('staf');
+  const [activeTab, setActiveTab] = useState<'staf' | 'audit' | 'mayar'>('staf');
   const [isAddStafOpen, setIsAddStafOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   // Metrics
   const totalStaff = staffList.length;
@@ -128,6 +136,25 @@ export default function PengaturanClient({
           <ShieldAlert className="w-4 h-4 text-amber-600" />
           <span>Audit Log Keamanan ({auditLogs.length})</span>
         </button>
+
+        {/* Tab 3: Khusus Role Owner (BR-01 / BR-12) */}
+        {currentProfile.peran === 'owner' && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('mayar')}
+            className={`pb-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 transition ${
+              activeTab === 'mayar'
+                ? 'border-emerald-600 text-emerald-950'
+                : 'border-transparent text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            <CreditCard className="w-4 h-4 text-emerald-600" />
+            <span>Transaksi Mayar ({mayarTransactions.length})</span>
+            <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded font-mono font-semibold uppercase">
+              Owner
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Tab 1: Manajemen Staf Cabang (US-10) */}
@@ -184,7 +211,9 @@ export default function PengaturanClient({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {staffList.map((staf) => {
+                  {staffList
+                    .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                    .map((staf) => {
                     const isSelf = staf.id === currentProfile.id;
                     return (
                       <tr key={staf.id} className="hover:bg-stone-50/70 transition">
@@ -266,6 +295,14 @@ export default function PengaturanClient({
                 </tbody>
               </table>
             </div>
+
+            {/* Kontrol Pagination (Maks 20 data per slide) */}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={staffList.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
       )}
@@ -290,6 +327,11 @@ export default function PengaturanClient({
 
           <AuditLogViewer logs={auditLogs} />
         </div>
+      )}
+
+      {/* Tab 3: Riwayat Transaksi Mayar (Khusus Role Owner) */}
+      {activeTab === 'mayar' && currentProfile.peran === 'owner' && (
+        <MayarTransactionsViewer initialTransactions={mayarTransactions} />
       )}
 
       {/* Modal Tambah Staf Baru */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Profile, Produk, RiwayatHargaModal } from '@/types/database';
 import { formatRupiah } from '@/lib/utils';
 import { 
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import ProdukModal from './ProdukModal';
 import HargaModalModal from './HargaModalModal';
+import Pagination from '@/components/ui/Pagination';
 
 interface ProdukClientProps {
   profile: Profile;
@@ -37,6 +38,13 @@ export default function ProdukClient({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('semua');
   const [statusFilter, setStatusFilter] = useState<'semua' | 'aktif' | 'nonaktif'>('semua');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
+  // Reset halaman saat filter berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, statusFilter]);
 
   // State Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -182,7 +190,9 @@ export default function ProdukClient({
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((p) => {
+                filteredProducts
+                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .map((p) => {
                   const modalPrice = latestModalMap[p.id];
                   return (
                     <tr key={p.id} className="hover:bg-stone-50/70 transition">
@@ -270,6 +280,14 @@ export default function ProdukClient({
             </tbody>
           </table>
         </div>
+
+        {/* Kontrol Pagination (Maks 20 data per slide) */}
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredProducts.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {/* Modal Tambah / Edit Produk */}

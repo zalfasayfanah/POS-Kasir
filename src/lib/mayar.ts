@@ -117,3 +117,70 @@ export async function getMayarInvoice(invoiceId: string): Promise<MayarInvoiceRe
     expiredAt: data.expiredAt,
   };
 }
+
+export interface MayarInvoiceListItem {
+  id: string;
+  amount: number;
+  status: 'paid' | 'closed' | 'unpaid' | string;
+  description: string;
+  link?: string;
+  paymentUrl?: string;
+  createdAt: number | string;
+  invoiceCode?: string;
+  customer?: {
+    id?: string;
+    email?: string;
+    mobile?: string;
+    name?: string;
+  };
+  transactions?: Array<{
+    id: string;
+    status: string;
+    extraData?: any;
+  }>;
+  nomor_struk?: string;
+  cabang_nama?: string;
+  kasir_nama?: string;
+}
+
+/**
+ * Ambil seluruh riwayat invoice dari Mayar API V2
+ */
+export async function getMayarInvoicesList(pageSize: number = 100): Promise<MayarInvoiceListItem[]> {
+  const apiKey = process.env.MAYAR_API_KEY;
+  if (!apiKey) {
+    throw new Error('MAYAR_API_KEY belum dikonfigurasi di environment variable.');
+  }
+
+  const res = await fetch(`${MAYAR_BASE_URL}/invoices?pageSize=${pageSize}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || !body || body.statusCode !== 200 || !Array.isArray(body.data)) {
+    const errorMsg = body?.messages || body?.message || `HTTP ${res.status} gagal mengambil daftar invoice Mayar.`;
+    throw new Error(errorMsg);
+  }
+
+  return body.data.map((d: any) => ({
+    id: d.id,
+    amount: d.amount || 0,
+    status: d.status || 'unpaid',
+    description: d.description || d.name || '-',
+    link: d.link,
+    paymentUrl: d.link
+      ? d.link.startsWith('http')
+        ? d.link
+        : `https://pub-sandbox.mayar.club/pl/${d.link}`
+      : undefined,
+    createdAt: d.createdAt,
+    customer: d.customer,
+    transactions: d.transactions || [],
+  }));
+}

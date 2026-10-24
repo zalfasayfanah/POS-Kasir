@@ -3,7 +3,13 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUserProfile } from '@/app/auth/actions';
-import { createMayarInvoice, getMayarInvoice, type MayarInvoiceResponse } from '@/lib/mayar';
+import { 
+  createMayarInvoice, 
+  getMayarInvoice, 
+  getMayarInvoicesList,
+  type MayarInvoiceResponse,
+  type MayarInvoiceListItem 
+} from '@/lib/mayar';
 import type { Transaksi } from '@/types/database';
 import type { CheckoutPayload } from '@/app/actions/pos';
 
@@ -379,3 +385,77 @@ async function batalkanTransaksiInternal(supabase: any, trx: any, alasan: string
     })
     .eq('id', trx.id);
 }
+
+/**
+ * Server Action: Ambil Riwayat Transaksi Mayar (Khusus Role Owner)
+ */
+export async function getMayarTransactionsHistoryAction(): Promise<{
+  success: boolean;
+  data?: MayarInvoiceListItem[];
+  error?: string;
+}> {
+  const profile = await getCurrentUserProfile();
+  if (!profile || !profile.aktif) {
+    return { success: false, error: 'Sesi Anda tidak valid atau akun dinonaktifkan.' };
+  }
+
+  // Khusus role Owner sesuai permintaan pengguna dan BR-01 / BR-12
+  if (profile.peran !== 'owner') {
+    return {
+      success: false,
+      error: 'Akses ditolak. Riwayat transaksi Mayar hanya boleh diakses oleh akun Owner.',
+    };
+  }
+
+  try {
+    const invoices = await getMayarInvoicesList(100);
+
+    // Cross-reference dengan tabel transaksi di Supabase untuk mendeteksi nomor struk & cabang
+    const supabase = await createClient();
+    const invoiceIds = invoices.map((inv) => inv.id);
+
+    if (invoiceIds.length > 0) {
+      const { data: matchedTrx } = await (supabase
+        .from('transaksi') as any)
+        .select(`
+          id,
+          nomor_struk,
+          mayar_invoice_id,
+          status,
+          cabang:cabang(nama),
+          kasir:profiles!transaksi_kasir_id_fkey(nama_lengkap)
+        `)
+        .in('mayar_invoice_id', invoiceIds);
+
+      if (matchedTrx && matchedTrx.length > 0) {
+        const trxMap = new Map<string, any>();
+        matchedTrx.forEach((t: any) => {
+          if (t.mayar_invoice_id) {
+            trxMap.set(t.mayar_invoice_id, t);
+          }
+        });
+
+        invoices.forEach((inv) => {
+          const matched = trxMap.get(inv.id);
+          if (matched) {
+            inv.nomor_struk = matched.nomor_struk;
+            inv.cabang_nama = matched.cabang?.nama;
+            inv.kasir_nama = matched.kasir?.nama_lengkap;
+          }
+        });
+      }
+    }
+
+    return {
+      success: true,
+      data: invoices,
+    };
+  } catch (err: any) {
+    console.error('[Mayar] Gagal memuat daftar transaksi:', err);
+    return {
+      success: false,
+      error: err.message || 'Gagal memuat riwayat transaksi dari Mayar API.',
+    };
+  }
+}
+
