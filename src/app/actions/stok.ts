@@ -30,7 +30,7 @@ export async function sesuaikanStokAction(formData: FormData): Promise<StokActio
   if (profile.peran !== 'kepala_toko' && profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Kepala Toko atau Owner yang berhak melakukan penyesuaian stok (US-07).',
+      error: 'Hanya Kepala Toko atau Owner yang berhak melakukan penyesuaian stok.',
     };
   }
 
@@ -58,7 +58,7 @@ export async function sesuaikanStokAction(formData: FormData): Promise<StokActio
   if (alasan.length < 5) {
     return {
       success: false,
-      error: 'Alasan penyesuaian stok wajib diisi minimal 5 karakter (US-07).',
+      error: 'Alasan penyesuaian stok wajib diisi minimal 5 karakter.',
     };
   }
 

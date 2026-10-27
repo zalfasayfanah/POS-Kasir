@@ -46,7 +46,7 @@ export default async function KasirPage() {
           <div>
             <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
               <ShoppingCart className="w-4 h-4" />
-              Halaman Kasir POS (US-02, US-03)
+              Halaman Kasir POS
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
               Penjualan Kasir · {profile?.cabang?.nama || 'Pusat'}
@@ -67,7 +67,7 @@ export default async function KasirPage() {
           </div>
         </div>
 
-        {/* Banner Wajib Buka Shift (BR-02) */}
+        {/* Banner Wajib Buka Shift */}
         <div className="bg-amber-500/10 border border-amber-400/50 rounded-3xl p-6 sm:p-8 text-amber-950 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-800 shrink-0 mt-0.5">
@@ -75,13 +75,13 @@ export default async function KasirPage() {
             </div>
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[11px] font-bold uppercase tracking-wider">
-                Shift Belum Dibuka (BR-02)
+                Shift Belum Dibuka
               </div>
               <h2 className="text-xl font-bold text-stone-900">
                 Buka Shift Terlebih Dahulu Sebelum Melayani Transaksi
               </h2>
               <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
-                Berdasarkan aturan operasional (BR-02), setiap petugas kasir wajib membuka shift dengan mencatat uang modal awal di laci kasir (Rp 0 s/d Rp 2.000.000) sebelum memproses transaksi penjualan POS.
+                Berdasarkan aturan operasional, setiap petugas kasir wajib membuka shift dengan mencatat uang modal awal di laci kasir (Rp 0 s/d Rp 2.000.000) sebelum memproses transaksi penjualan POS.
               </p>
             </div>
           </div>

@@ -64,7 +64,7 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
   if (!payload.shift_id) {
     return {
       success: false,
-      error: 'ID Shift tidak ditemukan. Anda wajib membuka shift kasir terlebih dahulu (BR-02).',
+      error: 'ID Shift tidak ditemukan. Anda wajib membuka shift kasir terlebih dahulu.',
     };
   }
 
@@ -78,14 +78,14 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
   if (shiftError || !shift) {
     return {
       success: false,
-      error: 'Shift kasir tidak ditemukan atau bukan milik akun Anda (BR-02).',
+      error: 'Shift kasir tidak ditemukan atau bukan milik akun Anda.',
     };
   }
 
   if (shift.status !== 'buka') {
     return {
       success: false,
-      error: `Shift kasir ini berstatus '${shift.status}'. Transaksi hanya dapat diproses saat shift berstatus 'buka' (BR-02).`,
+      error: `Shift kasir ini berstatus '${shift.status}'. Transaksi hanya dapat diproses saat shift berstatus 'buka'.`,
     };
   }
 
@@ -101,7 +101,7 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
     if (!item.produk_id || isNaN(item.jumlah) || item.jumlah < 1 || item.jumlah > 99) {
       return {
         success: false,
-        error: 'Jumlah per item harus berada di antara 1 sampai 99 (BR-05).',
+        error: 'Jumlah per item harus berada di antara 1 sampai 99.',
       };
     }
   }
@@ -159,14 +159,14 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
   if (diskon < 0 || diskon > maxDiskon) {
     return {
       success: false,
-      error: `Diskon tidak boleh melebihi 10% dari subtotal (Maksimal: Rp ${maxDiskon.toLocaleString('id-ID')}) (BR-06).`,
+      error: `Diskon tidak boleh melebihi 10% dari subtotal (Maksimal: Rp ${maxDiskon.toLocaleString('id-ID')}).`,
     };
   }
 
   if (diskon > 0 && alasanDiskon.length === 0) {
     return {
       success: false,
-      error: 'Alasan diskon wajib diisi jika diskon diberikan (BR-06).',
+      error: 'Alasan diskon wajib diisi jika diskon diberikan.',
     };
   }
 
@@ -187,27 +187,27 @@ export async function prosesTransaksiAction(payload: CheckoutPayload): Promise<C
     if (uangDiterima < expectedTotal) {
       return {
         success: false,
-        error: `Uang tunai yang diterima (Rp ${uangDiterima.toLocaleString('id-ID')}) kurang dari total belanja (Rp ${expectedTotal.toLocaleString('id-ID')}) (BR-07).`,
+        error: `Uang tunai yang diterima (Rp ${uangDiterima.toLocaleString('id-ID')}) kurang dari total belanja (Rp ${expectedTotal.toLocaleString('id-ID')}).`,
       };
     }
     const expectedKembalian = uangDiterima - expectedTotal;
     if (kembalian !== expectedKembalian) {
       return {
         success: false,
-        error: `Perhitungan kembalian tidak valid (Harus: Rp ${expectedKembalian.toLocaleString('id-ID')}) (BR-07).`,
+        error: `Perhitungan kembalian tidak valid (Harus: Rp ${expectedKembalian.toLocaleString('id-ID')}).`,
       };
     }
   } else if (payload.metode_bayar === 'qris') {
     if (uangDiterima !== expectedTotal) {
       return {
         success: false,
-        error: `Pembayaran QRIS harus tepat sesuai total belanja (Rp ${expectedTotal.toLocaleString('id-ID')}) (BR-07).`,
+        error: `Pembayaran QRIS harus tepat sesuai total belanja (Rp ${expectedTotal.toLocaleString('id-ID')}).`,
       };
     }
     if (kembalian !== 0) {
       return {
         success: false,
-        error: 'Kembalian untuk metode QRIS harus Rp 0 (BR-07).',
+        error: 'Kembalian untuk metode QRIS harus Rp 0.',
       };
     }
   } else {

@@ -83,7 +83,7 @@ export default function ProdukClient({
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <Coffee className="w-4 h-4" />
-            Manajemen Katalog Produk & Modal (US-08, BR-11)
+            Manajemen Katalog Produk & Modal
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Katalog Produk

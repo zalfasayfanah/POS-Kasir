@@ -54,7 +54,7 @@ export default function ShiftAktifPanel({ shift, transaksiList }: ShiftAktifPane
     e.preventDefault();
 
     if (isLargeDiff && (!catatanTutup || catatanTutup.trim().length < 3)) {
-      toast.error('Catatan Wajib Diisi (BR-09)', {
+      toast.error('Catatan Wajib Diisi', {
         description: 'Karena selisih kas melebihi Rp 20.000, Anda wajib menyertakan alasan penutupan.',
       });
       return;
@@ -262,7 +262,7 @@ export default function ShiftAktifPanel({ shift, transaksiList }: ShiftAktifPane
               <div>
                 <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
                   <Lock className="w-3.5 h-3.5" />
-                  Rekonsiliasi Kas (BR-09)
+                  Rekonsiliasi Kas
                 </div>
                 <h3 className="text-xl font-bold text-white mt-1">
                   Penutupan Shift Kasir
@@ -353,7 +353,7 @@ export default function ShiftAktifPanel({ shift, transaksiList }: ShiftAktifPane
                 <div className="space-y-2 p-4 rounded-2xl bg-red-50/80 border border-red-200 text-xs">
                   <div className="flex items-center gap-1.5 font-bold text-red-800">
                     <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-                    Wajib Catatan Alasan Selisih (BR-09):
+                    Wajib Catatan Alasan Selisih:
                   </div>
                   <p className="text-red-700 leading-relaxed">
                     Selisih kas melebihi batas toleransi <strong>Rp 20.000</strong>. Anda wajib menjelaskan penyebab selisih uang pada kolom di bawah ini.

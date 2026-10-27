@@ -24,7 +24,7 @@ export default function VoidModal({ transaksi, onClose, onSuccess }: VoidModalPr
     e.preventDefault();
 
     if (!isReasonValid) {
-      toast.error('Alasan void wajib diisi minimal 10 karakter (BR-08).');
+      toast.error('Alasan void wajib diisi minimal 10 karakter.');
       return;
     }
 
@@ -71,11 +71,11 @@ export default function VoidModal({ transaksi, onClose, onSuccess }: VoidModalPr
 
         {/* Content Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Warning Banner Ketentuan BR-08 */}
+          {/* Warning Banner Ketentuan */}
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1.5 leading-relaxed">
             <div className="flex items-center gap-2 font-bold text-amber-950">
               <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
-              <span>Aturan Operasional Void (BR-08 & BR-12)</span>
+              <span>Aturan Operasional Void</span>
             </div>
             <ul className="list-disc pl-5 space-y-0.5 text-amber-800 text-[11px]">
               <li>Hanya Kepala Toko cabang terkait atau Owner yang berhak melakukan void.</li>
@@ -108,7 +108,7 @@ export default function VoidModal({ transaksi, onClose, onSuccess }: VoidModalPr
             </div>
           </div>
 
-          {/* Input Alasan Void (BR-08: Minimal 10 karakter) */}
+          {/* Input Alasan Void */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-stone-800 block">
@@ -139,7 +139,7 @@ export default function VoidModal({ transaksi, onClose, onSuccess }: VoidModalPr
 
             {charCount > 0 && charCount < 10 && (
               <p className="text-[10px] text-red-600 font-semibold">
-                Alasan masih kurang {10 - charCount} karakter lagi (BR-08).
+                Alasan masih kurang {10 - charCount} karakter lagi.
               </p>
             )}
           </div>

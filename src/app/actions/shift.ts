@@ -38,7 +38,7 @@ export async function bukaShiftAction(formData: FormData): Promise<ShiftActionRe
   if (isNaN(kasAwal) || kasAwal < 0 || kasAwal > 2000000) {
     return {
       success: false,
-      error: 'Kas awal wajib berada di antara Rp 0 dan Rp 2.000.000 (BR-02).',
+      error: 'Kas awal wajib berada di antara Rp 0 dan Rp 2.000.000.',
     };
   }
 
@@ -59,7 +59,7 @@ export async function bukaShiftAction(formData: FormData): Promise<ShiftActionRe
   if (existingOpenShift) {
     return {
       success: false,
-      error: 'Anda sudah memiliki shift yang masih aktif. Harap tutup shift tersebut sebelum membuka shift baru (BR-02).',
+      error: 'Anda sudah memiliki shift yang masih aktif. Harap tutup shift tersebut sebelum membuka shift baru.',
     };
   }
 
@@ -171,7 +171,7 @@ export async function tutupShiftAction(formData: FormData): Promise<ShiftActionR
   if (pendingTrxCount && pendingTrxCount > 0) {
     return {
       success: false,
-      error: `Shift tidak dapat ditutup karena masih terdapat ${pendingTrxCount} transaksi QRIS berstatus 'menunggu_bayar'. Selesaikan pembayaran atau batalkan transaksi terlebih dahulu (PRD Bagian 11).`,
+      error: `Shift tidak dapat ditutup karena masih terdapat ${pendingTrxCount} transaksi QRIS berstatus 'menunggu_bayar'. Selesaikan pembayaran atau batalkan transaksi terlebih dahulu.`,
     };
   }
 
@@ -204,7 +204,7 @@ export async function tutupShiftAction(formData: FormData): Promise<ShiftActionR
   if (Math.abs(selisih) > 20000 && (!catatanTutup || catatanTutup.length < 3)) {
     return {
       success: false,
-      error: `Selisih kas (${selisih < 0 ? '-' : '+'}Rp ${Math.abs(selisih).toLocaleString('id-ID')}) melebihi batas toleransi Rp 20.000. Catatan penutupan wajib diisi dengan alasan yang jelas (BR-09).`,
+      error: `Selisih kas (${selisih < 0 ? '-' : '+'}Rp ${Math.abs(selisih).toLocaleString('id-ID')}) melebihi batas toleransi Rp 20.000. Catatan penutupan wajib diisi dengan alasan yang jelas.`,
     };
   }
 
@@ -276,7 +276,7 @@ export async function verifikasiShiftAction(formData: FormData): Promise<ShiftAc
   if (profile.peran !== 'kepala_toko' && profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Kepala Toko cabang terkait atau Owner yang berhak memverifikasi shift (BR-10).',
+      error: 'Hanya Kepala Toko cabang terkait atau Owner yang berhak memverifikasi shift.',
     };
   }
 
@@ -304,6 +304,6 @@ export async function verifikasiShiftAction(formData: FormData): Promise<ShiftAc
 
   return {
     success: true,
-    message: 'Shift kasir berhasil diverifikasi dan disetujui (BR-10).',
+    message: 'Shift kasir berhasil diverifikasi dan disetujui.',
   };
 }

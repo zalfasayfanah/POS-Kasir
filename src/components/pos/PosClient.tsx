@@ -101,7 +101,7 @@ export default function PosClient({
           return prevCart;
         }
         if (existing.jumlah >= 99) {
-          toast.warning('Maksimal pemesanan per item adalah 99 unit (BR-05).');
+          toast.warning('Maksimal pemesanan per item adalah 99 unit.');
           return prevCart;
         }
         return prevCart.map((item) =>
@@ -143,7 +143,7 @@ export default function PosClient({
             return { ...item, jumlah: item.stokTersedia };
           }
           if (newQty > 99) {
-            toast.warning('Maksimal 99 unit per item (BR-05).');
+            toast.warning('Maksimal 99 unit per item.');
             return { ...item, jumlah: 99 };
           }
           return { ...item, jumlah: newQty };
@@ -183,12 +183,12 @@ export default function PosClient({
 
     // Validasi Pembayaran
     if (metodeBayar === 'tunai' && uangDiterima < total) {
-      toast.error(`Uang tunai diterima kurang dari total tagihan (BR-07).`);
+      toast.error(`Uang tunai diterima kurang dari total tagihan.`);
       return;
     }
 
     if (diskon > 0 && (!alasanDiskon || alasanDiskon.trim().length === 0)) {
-      toast.error('Alasan diskon wajib diisi (BR-06).');
+      toast.error('Alasan diskon wajib diisi.');
       return;
     }
 

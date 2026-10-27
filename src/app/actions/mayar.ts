@@ -59,7 +59,7 @@ export async function buatTransaksiMayarAction(payload: CheckoutPayload): Promis
     .maybeSingle();
 
   if (shiftError || !shift || shift.status !== 'buka') {
-    return { success: false, error: 'Shift kasir tidak ditemukan atau tidak berstatus buka (BR-02).' };
+    return { success: false, error: 'Shift kasir tidak ditemukan atau tidak berstatus buka.' };
   }
 
   // 2. Validasi Keranjang & Verifikasi Harga Resmi
@@ -100,7 +100,7 @@ export async function buatTransaksiMayarAction(payload: CheckoutPayload): Promis
   }
 
   if (diskon > 0 && alasanDiskon.length === 0) {
-    return { success: false, error: 'Alasan diskon wajib diisi jika diskon diberikan (BR-06).' };
+    return { success: false, error: 'Alasan diskon wajib diisi jika diskon diberikan.' };
   }
 
   const expectedTotal = verifiedSubtotal - diskon;

@@ -93,7 +93,7 @@ export default function TransaksiClient({
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <Receipt className="w-4 h-4" />
-            Riwayat Penjualan & Struk (US-03, US-06)
+            Riwayat Penjualan & Struk
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Daftar Transaksi

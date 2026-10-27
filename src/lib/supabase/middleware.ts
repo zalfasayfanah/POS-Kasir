@@ -62,7 +62,7 @@ export async function updateSession(request: NextRequest) {
         await supabase.auth.signOut();
         const url = request.nextUrl.clone();
         url.pathname = '/login';
-        url.searchParams.set('error', 'Akun Anda dinonaktifkan. Hubungi Owner untuk aktivasi (BR-01).');
+        url.searchParams.set('error', 'Akun Anda dinonaktifkan. Hubungi Owner untuk aktivasi.');
         return NextResponse.redirect(url);
       }
     }

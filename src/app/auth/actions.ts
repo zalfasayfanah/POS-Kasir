@@ -51,7 +51,7 @@ export async function loginAction(formData: FormData) {
     await supabase.auth.signOut();
     return {
       success: false,
-      error: 'Akun Anda telah dinonaktifkan oleh Owner. Akses ditolak (BR-01).',
+      error: 'Akun Anda telah dinonaktifkan oleh Owner. Akses ditolak.',
     };
   }
 

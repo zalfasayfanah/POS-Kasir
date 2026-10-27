@@ -19,7 +19,7 @@ export async function tambahProdukAction(formData: FormData): Promise<ProdukActi
   if (!profile || !profile.aktif || profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Owner yang berhak menambah produk baru (US-08).',
+      error: 'Hanya Owner yang berhak menambah produk baru.',
     };
   }
 
@@ -101,7 +101,7 @@ export async function updateProdukAction(formData: FormData): Promise<ProdukActi
   if (!profile || !profile.aktif || profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Owner yang berhak mengubah data produk (US-08).',
+      error: 'Hanya Owner yang berhak mengubah data produk.',
     };
   }
 
@@ -193,7 +193,7 @@ export async function tambahHargaModalAction(formData: FormData): Promise<Produk
   if (!profile || !profile.aktif || profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Owner yang memiliki wewenang untuk mengatur harga modal (BR-11).',
+      error: 'Hanya Owner yang memiliki wewenang untuk mengatur harga modal.',
     };
   }
 
@@ -220,7 +220,7 @@ export async function tambahHargaModalAction(formData: FormData): Promise<Produk
   if (inputDateStr < todayWIBStr) {
     return {
       success: false,
-      error: `Tanggal berlaku (${inputDateStr}) tidak boleh di masa lalu (Hari ini WIB: ${todayWIBStr}) (BR-11).`,
+      error: `Tanggal berlaku (${inputDateStr}) tidak boleh di masa lalu (Hari ini WIB: ${todayWIBStr}).`,
     };
   }
 

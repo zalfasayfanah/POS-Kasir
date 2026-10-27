@@ -21,7 +21,7 @@ export default function BukaShiftForm({ cabangNama, kasirNama }: BukaShiftFormPr
   const handleKasChange = (val: number) => {
     setKasAwal(val);
     if (val < 0 || val > 2000000) {
-      setErrorInput('Kas awal wajib berada di antara Rp 0 dan Rp 2.000.000 (BR-02)');
+      setErrorInput('Kas awal wajib berada di antara Rp 0 dan Rp 2.000.000');
     } else {
       setErrorInput(null);
     }
@@ -30,7 +30,7 @@ export default function BukaShiftForm({ cabangNama, kasirNama }: BukaShiftFormPr
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (kasAwal < 0 || kasAwal > 2000000) {
-      toast.error('Kas awal tidak valid (BR-02: Rp 0 - Rp 2.000.000)');
+      toast.error('Kas awal tidak valid (Rp 0 - Rp 2.000.000)');
       return;
     }
 
@@ -58,7 +58,7 @@ export default function BukaShiftForm({ cabangNama, kasirNama }: BukaShiftFormPr
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-3">
             <Clock className="w-3.5 h-3.5" />
-            Pembukaan Shift Kasir (BR-02)
+            Pembukaan Shift Kasir
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Mulai Sesi Shift Baru
@@ -153,7 +153,7 @@ export default function BukaShiftForm({ cabangNama, kasirNama }: BukaShiftFormPr
         <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-900 space-y-1">
           <div className="font-bold flex items-center gap-1.5 text-amber-800">
             <Banknote className="w-4 h-4" />
-            Ketentuan Shift Kasir (BR-02):
+            Ketentuan Shift Kasir:
           </div>
           <p className="leading-relaxed text-amber-950/80">
             • Transaksi POS hanya dapat diproses saat shift berstatus <strong>Buka</strong>.<br />

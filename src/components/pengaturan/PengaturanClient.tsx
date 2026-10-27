@@ -87,7 +87,7 @@ export default function PengaturanClient({
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <Settings className="w-4 h-4" />
-            Pengaturan Sistem & Hak Akses (US-10, BR-12)
+            Pengaturan Sistem & Hak Akses
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Pengaturan & Audit Log
@@ -317,7 +317,7 @@ export default function PengaturanClient({
                 Audit Trail Permanen (Immutable)
               </h2>
               <p className="text-xs text-stone-500 mt-0.5">
-                Merekam otomatis setiap aksi pembatalan transaksi, verifikasi shift, penyesuaian stok, perubahan harga, dan modifikasi akun staf (BR-12).
+                Merekam otomatis setiap aksi pembatalan transaksi, verifikasi shift, penyesuaian stok, perubahan harga, dan modifikasi akun staf.
               </p>
             </div>
             <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-950 border border-amber-300">

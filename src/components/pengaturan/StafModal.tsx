@@ -70,7 +70,7 @@ export default function StafModal({ branches, onClose, onSuccess }: StafModalPro
             </div>
             <div>
               <h3 className="font-bold text-base tracking-tight">Tambah Akun Staf Baru</h3>
-              <p className="text-xs text-amber-100">Manajemen Pengguna & Hak Akses (US-10)</p>
+              <p className="text-xs text-amber-100">Manajemen Pengguna & Hak Akses</p>
             </div>
           </div>
           <button

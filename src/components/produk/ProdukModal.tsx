@@ -92,7 +92,7 @@ export default function ProdukModal({ produk, onClose, onSuccess }: ProdukModalP
                 {isEdit ? 'Ubah Data Produk' : 'Tambah Produk Baru'}
               </h3>
               <p className="text-xs text-amber-100">
-                {isEdit ? `SKU: ${produk?.sku}` : 'Katalog Lumbung Kopi dan Roti (US-08)'}
+                {isEdit ? `SKU: ${produk?.sku}` : 'Katalog Lumbung Kopi dan Roti'}
               </p>
             </div>
           </div>

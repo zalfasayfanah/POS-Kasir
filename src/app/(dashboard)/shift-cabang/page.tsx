@@ -56,7 +56,7 @@ export default async function ShiftCabangPage({ searchParams }: PageProps) {
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <Users className="w-4 h-4" />
-            Rekonsiliasi & Verifikasi Kasir (US-05, BR-10)
+            Rekonsiliasi & Verifikasi Kasir
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Shift Cabang

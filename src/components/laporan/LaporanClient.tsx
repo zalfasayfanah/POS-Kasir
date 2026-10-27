@@ -684,7 +684,7 @@ export default function LaporanClient({
           <div>
             <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
               <BarChart3 className="w-4 h-4" />
-              Dashboard Analitik & Laporan Penjualan (US-09)
+              Dashboard Analitik & Laporan Penjualan
             </div>
             <h1 className="text-2xl font-bold text-stone-900">
               Laporan Kinerja Transaksi
@@ -933,7 +933,7 @@ export default function LaporanClient({
               </div>
               <div>
                 <h2 className="text-base font-bold text-amber-300 flex items-center gap-2">
-                  Laporan Laba Kotor & HPP Konsolidasi (BR-11)
+                  Laporan Laba Kotor & HPP Konsolidasi
                   <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-mono uppercase tracking-wider">
                     Owner Exclusive
                   </span>
@@ -1958,7 +1958,7 @@ export default function LaporanClient({
           <div className="flex items-center gap-2 text-xs">
             <span className="flex items-center gap-1 text-red-700 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded">
               <AlertTriangle className="w-3.5 h-3.5" />
-              Highlight: |Selisih| &gt; Rp 20.000 (BR-09)
+              Highlight: |Selisih| &gt; Rp 20.000
             </span>
           </div>
         </div>

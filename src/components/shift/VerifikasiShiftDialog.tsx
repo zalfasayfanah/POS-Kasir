@@ -29,7 +29,7 @@ export default function VerifikasiShiftDialog({ shift }: VerifikasiShiftDialogPr
     startTransition(async () => {
       const res = await verifikasiShiftAction(formData);
       if (res.success) {
-        toast.success('Shift Berhasil Diverifikasi (BR-10)', {
+        toast.success('Shift Berhasil Diverifikasi', {
           description: res.message,
         });
         setIsOpen(false);
@@ -60,7 +60,7 @@ export default function VerifikasiShiftDialog({ shift }: VerifikasiShiftDialogPr
               <div>
                 <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
                   <ShieldCheck className="w-4 h-4" />
-                  Verifikasi Pengawas (BR-10)
+                  Verifikasi Pengawas
                 </div>
                 <h3 className="text-xl font-bold text-white mt-1">
                   Verifikasi Rekonsiliasi Shift

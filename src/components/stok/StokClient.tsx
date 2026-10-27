@@ -264,7 +264,7 @@ export default function StokClient({
         <div>
           <div className="flex items-center gap-2 text-amber-700 font-semibold text-xs uppercase tracking-wider mb-1">
             <Package className="w-4 h-4" />
-            Inventori & Stok Fisik Cabang (US-07)
+            Inventori & Stok Fisik Cabang
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Stok Cabang

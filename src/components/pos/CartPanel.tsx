@@ -291,7 +291,7 @@ export default function CartPanel({
                   className="text-xs font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-1.5 transition"
                 >
                   <Tag className="w-3.5 h-3.5" />
-                  <span>+ Beri Diskon (Maks. 10% - BR-06)</span>
+                  <span>+ Beri Diskon (Maks. 10%)</span>
                 </button>
               ) : (
                 <div className="p-3 bg-amber-50/70 rounded-2xl border border-amber-200 space-y-2.5">
@@ -339,11 +339,11 @@ export default function CartPanel({
                     </button>
                   </div>
 
-                  {/* Input Alasan Diskon (BR-06: Wajib diisi jika diskon > 0) */}
+                  {/* Input Alasan Diskon */}
                   {diskon > 0 && (
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-amber-900 block">
-                        Alasan Diskon (Wajib Diisi - BR-06):
+                        Alasan Diskon (Wajib Diisi):
                       </label>
                       <input
                         type="text"
@@ -359,7 +359,7 @@ export default function CartPanel({
                       {alasanDiskon.trim().length === 0 && (
                         <p className="text-[10px] text-red-600 font-semibold flex items-center gap-1">
                           <AlertCircle className="w-3 h-3" />
-                          Alasan diskon tidak boleh kosong (BR-06).
+                          Alasan diskon tidak boleh kosong.
                         </p>
                       )}
                     </div>
@@ -379,10 +379,10 @@ export default function CartPanel({
             </div>
           </div>
 
-          {/* Pemilihan Metode Pembayaran (BR-07) */}
+          {/* Pemilihan Metode Pembayaran */}
           <div className="space-y-2.5 pt-1">
             <span className="text-xs font-bold text-stone-700 block">
-              Metode Pembayaran (BR-07)
+              Metode Pembayaran
             </span>
 
             <div className="grid grid-cols-3 gap-1.5">
@@ -484,8 +484,7 @@ export default function CartPanel({
                       Uang kurang:{' '}
                       <strong className="font-mono">
                         {formatRupiah(total - uangDiterima)}
-                      </strong>{' '}
-                      (BR-07).
+                      </strong>.
                     </span>
                   </div>
                 ) : (
@@ -510,7 +509,7 @@ export default function CartPanel({
                   <span className="font-bold font-mono text-amber-950">{formatRupiah(total)}</span>
                 </div>
                 <p className="text-[10.5px] text-stone-600 leading-relaxed">
-                  Tagihan invoice QRIS dinamis akan dibuat via Mayar API V2 dengan timer 10 menit, penguncian stok, dan verifikasi otomatis (PRD Bagian 11).
+                  Tagihan invoice QRIS dinamis akan dibuat via Mayar API V2 dengan timer 10 menit, penguncian stok, dan verifikasi otomatis.
                 </p>
               </div>
             ) : (
@@ -520,7 +519,7 @@ export default function CartPanel({
                   <span className="font-bold font-mono text-stone-900">{formatRupiah(total)}</span>
                 </div>
                 <p className="text-[10px] text-stone-500 leading-relaxed">
-                  Tunjukkan barcode QRIS statis kasir ke pelanggan. Pastikan bukti transfer terverifikasi lunas sebelum menekan tombol bayar (BR-07: nominal pas, kembalian Rp0).
+                  Tunjukkan barcode QRIS statis kasir ke pelanggan. Pastikan bukti transfer terverifikasi lunas sebelum menekan tombol bayar (nominal pas, kembalian Rp0).
                 </p>
               </div>
             )}

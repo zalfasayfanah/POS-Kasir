@@ -33,7 +33,7 @@ export async function voidTransaksiAction(formData: FormData): Promise<VoidActio
   if (profile.peran !== 'kepala_toko' && profile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Kasir tidak memiliki wewenang untuk membatalkan (void) transaksi. Hubungi Kepala Toko atau Owner (BR-08).',
+      error: 'Kasir tidak memiliki wewenang untuk membatalkan (void) transaksi. Hubungi Kepala Toko atau Owner.',
     };
   }
 
@@ -50,7 +50,7 @@ export async function voidTransaksiAction(formData: FormData): Promise<VoidActio
   if (alasanVoid.length < 10) {
     return {
       success: false,
-      error: `Alasan void harus memiliki panjang minimal 10 karakter (Saat ini: ${alasanVoid.length} karakter) (BR-08).`,
+      error: `Alasan void harus memiliki panjang minimal 10 karakter (Saat ini: ${alasanVoid.length} karakter).`,
     };
   }
 

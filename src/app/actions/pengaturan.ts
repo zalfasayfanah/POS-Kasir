@@ -20,7 +20,7 @@ export async function tambahStafAction(formData: FormData): Promise<StafActionRe
   if (!currentProfile || !currentProfile.aktif || currentProfile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Owner yang memiliki wewenang mengelola akun staf (US-10).',
+      error: 'Hanya Owner yang memiliki wewenang mengelola akun staf.',
     };
   }
 
@@ -125,7 +125,7 @@ export async function updateStafStatusAction(formData: FormData): Promise<StafAc
   if (!currentProfile || !currentProfile.aktif || currentProfile.peran !== 'owner') {
     return {
       success: false,
-      error: 'Hanya Owner yang berhak mengubah status akun staf (US-10).',
+      error: 'Hanya Owner yang berhak mengubah status akun staf.',
     };
   }
 
