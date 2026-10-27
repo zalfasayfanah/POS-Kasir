@@ -20,7 +20,6 @@ import {
   Clock,
   Layers,
   Percent,
-  Download,
   FileSpreadsheet,
   Printer,
   RotateCcw,
@@ -807,16 +806,10 @@ export default function LaporanClient({
           </div>
         </div>
 
-        {/* Tombol Ekspor Laporan (Fase 8: CSV & PDF) */}
-        <div className="pt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-stone-600">
-            <Download className="w-4 h-4 text-amber-700" />
-            <span>Ekspor Data:</span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
+        {/* Tombol Ekspor & Cetak Laporan */}
+        <div className="pt-4 border-t border-stone-100 flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
               onClick={exportTransaksiCsv}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold transition shadow-xs cursor-pointer"
               title="Unduh seluruh transaksi hasil filter ke format file CSV"
@@ -844,7 +837,6 @@ export default function LaporanClient({
               <Printer className="w-3.5 h-3.5 text-amber-400" />
               <span>Cetak / Ekspor PDF</span>
             </button>
-          </div>
         </div>
       </div>
 
