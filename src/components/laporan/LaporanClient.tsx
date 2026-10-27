@@ -811,7 +811,7 @@ export default function LaporanClient({
         <div className="pt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-stone-600">
             <Download className="w-4 h-4 text-amber-700" />
-            <span>Ekspor Data (Fase 8 - Nilai Tambah):</span>
+            <span>Ekspor Data:</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
